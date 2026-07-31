@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const signals = [
   { x: 52, y: 17, value: "0.82" },
   { x: 39, y: 35, value: "0.91" },
@@ -10,7 +12,10 @@ export function HeroScan() {
   return (
     <div className="hero-scan" aria-label="Conceptual visualization of solar observations across Lebanon">
       <div className="scan-topline">
-        <span><i /> Live evidence layer</span>
+        <span className="scan-brand">
+          <Image src="/brand/nuwatt-symbol.webp" alt="" width={28} height={28} />
+          <span><i /> Live evidence layer</span>
+        </span>
         <code>33.8547° N · 35.8623° E</code>
       </div>
       <div className="scan-canvas">

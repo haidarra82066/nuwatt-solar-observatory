@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import * as maplibregl from "maplibre-gl";
 import type {
@@ -48,7 +49,7 @@ const metricExpressions: Record<MapMetric, unknown> = {
     0.65,
     "#52bcdd",
     1.35,
-    "#0b7596",
+    "#16213e",
   ],
   installations: [
     "interpolate",
@@ -59,7 +60,7 @@ const metricExpressions: Record<MapMetric, unknown> = {
     120,
     "#52bcdd",
     230,
-    "#0b7596",
+    "#16213e",
   ],
   confidence: [
     "interpolate",
@@ -264,15 +265,15 @@ export default function ObservatoryMap({
             ["linear"],
             ["heatmap-density"],
             0,
-            "rgba(11, 117, 150, 0)",
+            "rgba(82, 188, 221, 0)",
             0.12,
             "rgba(244, 193, 158, 0.34)",
             0.36,
             "rgba(82, 188, 221, 0.68)",
             0.64,
-            "rgba(11, 117, 150, 0.86)",
+            "rgba(82, 188, 221, 0.86)",
             1,
-            "rgba(4, 44, 70, 0.96)",
+            "rgba(22, 33, 62, 0.96)",
           ],
         },
       });
@@ -282,7 +283,7 @@ export default function ObservatoryMap({
         type: "line",
         source: "observations",
         paint: {
-          "line-color": ["case", ["boolean", ["feature-state", "selected"], false], "#051d2d", "#087fa3"],
+          "line-color": ["case", ["boolean", ["feature-state", "selected"], false], "#0f0f23", "#52bcdd"],
           "line-width": ["case", ["boolean", ["feature-state", "selected"], false], 3.4, 1.8],
           "line-opacity": 0.96,
         },
@@ -309,18 +310,18 @@ export default function ObservatoryMap({
             "match",
             ["get", "status"],
             "verified",
-            "#14946f",
+            "#218f75",
             "detected",
-            "#087fa3",
+            "#52bcdd",
             "estimated",
-            "#e28a55",
-            "#087fa3",
+            "#f4c19e",
+            "#52bcdd",
           ],
           "circle-opacity": 0.97,
           "circle-stroke-color": [
             "case",
             ["boolean", ["feature-state", "selected"], false],
-            "#061d2c",
+            "#0f0f23",
             "#ffffff",
           ],
           "circle-stroke-width": ["case", ["boolean", ["feature-state", "selected"], false], 4, 2],
@@ -453,9 +454,12 @@ export default function ObservatoryMap({
     <div className="observatory-map-wrap">
       <div className="observatory-map" ref={containerRef} />
       <div className="map-heatmap-note">
-        <span>Synthetic pilot layer</span>
-        <strong>Heat = relative {metricLabels[metric]}</strong>
-        <small>Circles mark generalized candidate clusters</small>
+        <Image src="/brand/nuwatt-symbol.webp" alt="" width={34} height={34} />
+        <div>
+          <span>Synthetic pilot layer</span>
+          <strong>Heat = relative {metricLabels[metric]}</strong>
+          <small>Circles mark generalized candidate clusters</small>
+        </div>
       </div>
     </div>
   );

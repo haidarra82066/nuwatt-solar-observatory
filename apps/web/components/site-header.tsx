@@ -21,9 +21,12 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link className="button button-small button-light desktop-cta" href="/observatory">
-          Explore the demo
-          <span aria-hidden="true">↗</span>
+        <a className="desktop-nuwatt-link" href="https://www.nuwatt.co/en" target="_blank" rel="noreferrer">
+          NuWatt.com <span aria-hidden="true">↗</span>
+        </a>
+        <Link className="button button-small button-brand desktop-cta" href="/observatory">
+          Open the map
+          <span aria-hidden="true">→</span>
         </Link>
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>
@@ -33,6 +36,7 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
+            <a href="https://www.nuwatt.co/en" target="_blank" rel="noreferrer">NuWatt.com ↗</a>
           </nav>
         </details>
       </div>

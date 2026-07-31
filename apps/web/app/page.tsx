@@ -35,7 +35,7 @@ export default function Home() {
       <section className="hero-section">
         <div className="shell hero-grid">
           <div className="hero-copy">
-            <p className="eyebrow eyebrow-light"><span /> Lebanon · Open energy intelligence</p>
+            <p className="eyebrow"><span /> Lebanon · Open energy intelligence</p>
             <h1>Make Lebanon&apos;s solar transition <em>visible.</em></h1>
             <p className="hero-lede">
               An open geospatial observatory mapping where photovoltaic systems are likely installed,
@@ -45,7 +45,7 @@ export default function Home() {
               <Link className="button button-accent" href="/observatory">
                 Explore the observatory <span aria-hidden="true">→</span>
               </Link>
-              <Link className="button button-ghost" href="/methodology">See how it works</Link>
+              <Link className="button button-secondary" href="/methodology">See how it works</Link>
             </div>
             <div className="hero-proof">
               <span><b>Open</b> Versioned releases</span>

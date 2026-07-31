@@ -25,10 +25,10 @@ export function SiteFooter() {
           <a href="/api/v1/health">API health</a>
         </div>
         <div>
-          <p className="footer-label">Evidence first</p>
-          <p>
-            Every release exposes source dates, model versions, uncertainty, coverage, and validation status.
-          </p>
+          <p className="footer-label">NuWatt ecosystem</p>
+          <a href="https://www.nuwatt.co/en" target="_blank" rel="noreferrer">NuWatt website ↗</a>
+          <a href="https://www.admin.nuwatt.co/login" target="_blank" rel="noreferrer">Installer portal ↗</a>
+          <a href="https://portal.nuwatt.co/login/" target="_blank" rel="noreferrer">Client portal ↗</a>
         </div>
       </div>
       <div className="shell footer-bottom">
