@@ -47,6 +47,25 @@ export interface ObservatorySummary {
   evidenceCounts: Record<EvidenceStatus, number>;
 }
 
+export interface CellFeatureProperties {
+  id: string;
+  municipality: string;
+  district: string;
+  governorate: string;
+  status: EvidenceStatus;
+  installations: number;
+  capacity_p10_mwp: number;
+  capacity_p50_mwp: number;
+  capacity_p90_mwp: number;
+  generation_p10_gwh: number;
+  generation_p50_gwh: number;
+  generation_p90_gwh: number;
+  confidence: number;
+  coverage_km2: number;
+  imagery_date: string;
+  imagery_resolution_m: number;
+}
+
 export interface CellFeatureCollection {
   type: "FeatureCollection";
   features: Array<{
@@ -56,23 +75,19 @@ export interface CellFeatureCollection {
       type: "Polygon";
       coordinates: [number, number][][];
     };
-    properties: {
-      id: string;
-      municipality: string;
-      district: string;
-      governorate: string;
-      status: EvidenceStatus;
-      installations: number;
-      capacity_p10_mwp: number;
-      capacity_p50_mwp: number;
-      capacity_p90_mwp: number;
-      generation_p10_gwh: number;
-      generation_p50_gwh: number;
-      generation_p90_gwh: number;
-      confidence: number;
-      coverage_km2: number;
-      imagery_date: string;
-      imagery_resolution_m: number;
+    properties: CellFeatureProperties;
+  }>;
+}
+
+export interface CellPointFeatureCollection {
+  type: "FeatureCollection";
+  features: Array<{
+    type: "Feature";
+    id: string;
+    geometry: {
+      type: "Point";
+      coordinates: [number, number];
     };
+    properties: CellFeatureProperties;
   }>;
 }

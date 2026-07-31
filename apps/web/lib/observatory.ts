@@ -1,5 +1,7 @@
 import type {
   CellFeatureCollection,
+  CellFeatureProperties,
+  CellPointFeatureCollection,
   EvidenceStatus,
   MunicipalitySummary,
   ObservationCell,
@@ -255,6 +257,27 @@ export function getMunicipalities(cells: ObservationCell[] = observationCells): 
     .sort((a, b) => b.capacityMwpP50 - a.capacityMwpP50);
 }
 
+function toFeatureProperties(cell: ObservationCell): CellFeatureProperties {
+  return {
+    id: cell.id,
+    municipality: cell.municipality,
+    district: cell.district,
+    governorate: cell.governorate,
+    status: cell.status,
+    installations: cell.installations,
+    capacity_p10_mwp: cell.capacityMwp.p10,
+    capacity_p50_mwp: cell.capacityMwp.p50,
+    capacity_p90_mwp: cell.capacityMwp.p90,
+    generation_p10_gwh: cell.generationGwh.p10,
+    generation_p50_gwh: cell.generationGwh.p50,
+    generation_p90_gwh: cell.generationGwh.p90,
+    confidence: cell.confidence,
+    coverage_km2: cell.coverageKm2,
+    imagery_date: cell.imageryDate,
+    imagery_resolution_m: cell.imageryResolutionM,
+  };
+}
+
 export function toFeatureCollection(cells: ObservationCell[] = observationCells): CellFeatureCollection {
   return {
     type: "FeatureCollection",
@@ -265,24 +288,24 @@ export function toFeatureCollection(cells: ObservationCell[] = observationCells)
         type: "Polygon",
         coordinates: [cell.polygon],
       },
-      properties: {
-        id: cell.id,
-        municipality: cell.municipality,
-        district: cell.district,
-        governorate: cell.governorate,
-        status: cell.status,
-        installations: cell.installations,
-        capacity_p10_mwp: cell.capacityMwp.p10,
-        capacity_p50_mwp: cell.capacityMwp.p50,
-        capacity_p90_mwp: cell.capacityMwp.p90,
-        generation_p10_gwh: cell.generationGwh.p10,
-        generation_p50_gwh: cell.generationGwh.p50,
-        generation_p90_gwh: cell.generationGwh.p90,
-        confidence: cell.confidence,
-        coverage_km2: cell.coverageKm2,
-        imagery_date: cell.imageryDate,
-        imagery_resolution_m: cell.imageryResolutionM,
+      properties: toFeatureProperties(cell),
+    })),
+  };
+}
+
+export function toPointFeatureCollection(
+  cells: ObservationCell[] = observationCells,
+): CellPointFeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: cells.map((cell) => ({
+      type: "Feature",
+      id: cell.id,
+      geometry: {
+        type: "Point",
+        coordinates: cell.centroid,
       },
+      properties: toFeatureProperties(cell),
     })),
   };
 }

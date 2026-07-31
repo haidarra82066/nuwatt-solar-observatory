@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { getMunicipalities, getSummary, observationCells, toFeatureCollection } from "@/lib/observatory";
+import {
+  getMunicipalities,
+  getSummary,
+  observationCells,
+  toFeatureCollection,
+  toPointFeatureCollection,
+} from "@/lib/observatory";
 
 describe("observatory data contract", () => {
   it("aggregates every demonstration cell", () => {
@@ -22,6 +28,14 @@ describe("observatory data contract", () => {
     expect(geojson.features[0].geometry.coordinates[0][0]).toEqual(
       geojson.features[0].geometry.coordinates[0].at(-1),
     );
+  });
+
+  it("exports a weighted heatmap point for every pilot cell", () => {
+    const geojson = toPointFeatureCollection();
+
+    expect(geojson.features).toHaveLength(observationCells.length);
+    expect(geojson.features[0].geometry.coordinates).toEqual(observationCells[0].centroid);
+    expect(geojson.features[0].properties.installations).toBeGreaterThan(0);
   });
 
   it("orders municipality summaries by estimated capacity", () => {

@@ -7,7 +7,12 @@ import { DemoNotice } from "@/components/demo-notice";
 import { MetricIcon } from "@/components/metric-icon";
 import { TrendChart } from "@/components/trend-chart";
 import { formatDate, formatNumber, formatPercent, titleCase } from "@/lib/format";
-import { getMunicipalities, getSummary, toFeatureCollection } from "@/lib/observatory";
+import {
+  getMunicipalities,
+  getSummary,
+  toFeatureCollection,
+  toPointFeatureCollection,
+} from "@/lib/observatory";
 import type { EvidenceStatus, MapMetric, ObservationCell } from "@/lib/types";
 
 const ObservatoryMap = dynamic(() => import("@/components/observatory-map"), {
@@ -31,6 +36,7 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
   const summary = useMemo(() => getSummary(visibleCells), [visibleCells]);
   const municipalities = useMemo(() => getMunicipalities(visibleCells), [visibleCells]);
   const featureCollection = useMemo(() => toFeatureCollection(cells), [cells]);
+  const pointFeatureCollection = useMemo(() => toPointFeatureCollection(cells), [cells]);
   const selectedCell = cells.find((cell) => cell.id === selectedId) ?? null;
 
   function toggleStatus(status: EvidenceStatus) {
@@ -113,7 +119,7 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
         <section className="map-panel">
           <div className="map-toolbar">
             <div>
-              <span>Evidence surface</span>
+              <span>Candidate density heatmap</span>
               <strong>{metricOptions.find((option) => option.value === metric)?.label}</strong>
             </div>
             <div className={`metric-legend legend-${metric}`}>
@@ -122,13 +128,14 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
           </div>
           <ObservatoryMap
             data={featureCollection}
+            points={pointFeatureCollection}
             metric={metric}
             statuses={statuses}
             selectedId={selectedId}
             onSelect={setSelectedId}
           />
           <div className="map-footnote">
-            <span>Map cells are generalized and synthetic</span>
+            <span>Heatmap and clusters are generalized synthetic pilot evidence</span>
             <span>Basemap © OpenStreetMap contributors</span>
           </div>
         </section>
