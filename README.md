@@ -1,0 +1,96 @@
+# NuWatt Open Solar Observatory
+
+An open, versioned, and uncertainty-aware geospatial platform for understanding
+Lebanon's distributed photovoltaic fleet.
+
+> **Current status: foundation release.** The application is fully runnable,
+> but its bundled observations are synthetic demonstration data. It does not yet
+> claim national rooftop-PV coverage or publish measured Lebanese installations.
+
+## What is included
+
+- A responsive Next.js observatory with an interactive Lebanon map
+- Explicit `Detected`, `AI-estimated`, and `Verified` evidence states
+- P10/P50/P90 capacity and technical-generation estimates
+- Public JSON and GeoJSON API routes
+- A versioned sample data release and downloadable OpenAPI definition
+- A Python capacity-estimation and GeoJSON-enrichment pipeline
+- A PostGIS-ready production schema
+- Docker, continuous integration, tests, governance, privacy, and imagery-policy documentation
+- A phase-gated plan from foundation to a validated public MVP
+
+## Product boundary
+
+The observatory estimates the location and scale of PV installations from
+imagery and supporting geospatial evidence. It does **not** infer certified
+system ratings or actual delivered electricity from imagery alone. Public
+outputs are aggregated wherever exact locations could create privacy or
+infrastructure-security concerns.
+
+## Quick start
+
+Requirements: Node.js 22+, npm 10+, and optionally Python 3.11+.
+
+```bash
+npm install
+npm run dev
+```
+
+On Windows PowerShell with script execution disabled, use `npm.cmd` instead:
+
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). The map uses OpenStreetMap
+raster tiles by default and remains navigable with its data overlays if tiles
+are unavailable.
+
+## Validation
+
+```bash
+npm run check
+```
+
+The Python pipeline can also enrich a GeoJSON feature collection:
+
+```bash
+python -m services.pipeline.src.nuwatt_pipeline.cli \
+  services/pipeline/examples/arrays.geojson \
+  artifacts/enriched-arrays.geojson
+```
+
+## Repository map
+
+```text
+apps/web/                 Public platform, API, and bundled demo release
+services/pipeline/        Geospatial contracts and capacity estimation
+infra/postgres/           PostGIS schema and database bootstrap
+docs/                     Architecture, delivery plan, policy, and data contracts
+.github/workflows/        Automated quality gates
+```
+
+## Delivery plan
+
+The executable roadmap is in [docs/ROADMAP.md](docs/ROADMAP.md). The shortest
+credible path is a 20-50 km², four-environment pilot followed by a public beta.
+The decisive experiment is whether free lower-resolution imagery can rank PV
+candidates materially better than a simple contextual baseline.
+
+## API
+
+The foundation API is available under `/api/v1`:
+
+- `GET /api/v1/health`
+- `GET /api/v1/summary`
+- `GET /api/v1/cells?status=detected&governorate=Beirut`
+- `GET /api/v1/municipalities`
+
+See [apps/web/public/openapi.json](apps/web/public/openapi.json) for the contract.
+
+## Contributing and licensing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes. Code is
+Apache-2.0; the bundled synthetic data is CC0. Imagery, third-party datasets,
+and NuWatt brand assets retain their own terms.

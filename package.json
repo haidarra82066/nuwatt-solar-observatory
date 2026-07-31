@@ -1,0 +1,36 @@
+{
+  "name": "nuwatt-solar-observatory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Open, uncertainty-aware geospatial intelligence for Lebanon's distributed solar fleet.",
+  "workspaces": [
+    "apps/*"
+  ],
+  "dependencies": {
+    "postcss": "8.5.25",
+    "sharp": "0.35.3"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @nuwatt/observatory-web",
+    "build": "npm run build --workspace @nuwatt/observatory-web",
+    "lint": "npm run lint --workspace @nuwatt/observatory-web",
+    "typecheck": "npm run typecheck --workspace @nuwatt/observatory-web",
+    "test": "npm run test --workspace @nuwatt/observatory-web",
+    "test:pipeline": "python -m unittest discover -s services/pipeline/tests -p \"test_*.py\"",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run test:pipeline && npm run build"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0",
+    "python": ">=3.11"
+  },
+  "overrides": {
+    "postcss": "8.5.25",
+    "sharp": "0.35.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haidarra82066/nuwatt-solar-observatory.git"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,50 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NuWatt Open Solar Observatory API",
+    "version": "1.0.0-demo",
+    "description": "Read-only public contracts for versioned solar evidence. The foundation release contains synthetic demonstration data only."
+  },
+  "servers": [{ "url": "/api/v1" }],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Check API and release status",
+        "responses": { "200": { "description": "Service status" } }
+      }
+    },
+    "/summary": {
+      "get": {
+        "summary": "Get release-wide summary metrics",
+        "responses": { "200": { "description": "Summary with P10/P50/P90 ranges" } }
+      }
+    },
+    "/cells": {
+      "get": {
+        "summary": "Get generalized evidence cells as GeoJSON",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["detected", "estimated", "verified"] }
+          },
+          {
+            "name": "governorate",
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "GeoJSON FeatureCollection" },
+          "400": { "description": "Invalid filter" }
+        }
+      }
+    },
+    "/municipalities": {
+      "get": {
+        "summary": "Get municipality aggregates",
+        "responses": { "200": { "description": "Municipality ranking" } }
+      }
+    }
+  }
+}

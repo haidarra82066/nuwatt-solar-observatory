@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "name": "nuwatt-observatory-demo-2026-01",
+  "metadata": {
+    "release": "demo-2026-01",
+    "data_mode": "synthetic-demo",
+    "licence": "CC0-1.0",
+    "disclaimer": "Synthetic product demonstration. Not measured or detected Lebanese PV data."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "LBN-BEY-001",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.4668,33.8688],[35.5368,33.8688],[35.5368,33.9188],[35.4668,33.9188],[35.4668,33.8688]]] },
+      "properties": { "id":"LBN-BEY-001","municipality":"Beirut","district":"Beirut","governorate":"Beirut","status":"verified","installations":226,"capacity_p10_mwp":1.04,"capacity_p50_mwp":1.31,"capacity_p90_mwp":1.61,"generation_p10_gwh":1.52,"generation_p50_gwh":1.94,"generation_p90_gwh":2.45,"confidence":0.91,"coverage_km2":4.8,"imagery_date":"2026-05-18","imagery_resolution_m":0.3 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-BAB-002",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.4982,33.8039],[35.5882,33.8039],[35.5882,33.8639],[35.4982,33.8639],[35.4982,33.8039]]] },
+      "properties": { "id":"LBN-BAB-002","municipality":"Baabda","district":"Baabda","governorate":"Mount Lebanon","status":"detected","installations":184,"capacity_p10_mwp":0.89,"capacity_p50_mwp":1.12,"capacity_p90_mwp":1.39,"generation_p10_gwh":1.3,"generation_p50_gwh":1.66,"generation_p90_gwh":2.1,"confidence":0.84,"coverage_km2":5.1,"imagery_date":"2026-04-11","imagery_resolution_m":0.5 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-KES-003",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.5679,33.9458],[35.6679,33.9458],[35.6679,34.0158],[35.5679,34.0158],[35.5679,33.9458]]] },
+      "properties": { "id":"LBN-KES-003","municipality":"Jounieh","district":"Keserwan","governorate":"Keserwan-Jbeil","status":"detected","installations":142,"capacity_p10_mwp":0.71,"capacity_p50_mwp":0.93,"capacity_p90_mwp":1.17,"generation_p10_gwh":1.03,"generation_p50_gwh":1.38,"generation_p90_gwh":1.78,"confidence":0.81,"coverage_km2":4.2,"imagery_date":"2026-03-27","imagery_resolution_m":0.5 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-ZAH-004",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.832,33.7963],[35.972,33.7963],[35.972,33.8963],[35.832,33.8963],[35.832,33.7963]]] },
+      "properties": { "id":"LBN-ZAH-004","municipality":"Zahle","district":"Zahle","governorate":"Beqaa","status":"estimated","installations":165,"capacity_p10_mwp":0.77,"capacity_p50_mwp":1.02,"capacity_p90_mwp":1.33,"generation_p10_gwh":1.15,"generation_p50_gwh":1.55,"generation_p90_gwh":2.07,"confidence":0.68,"coverage_km2":5.7,"imagery_date":"2026-04-03","imagery_resolution_m":10 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-BAA-005",
+      "geometry": { "type": "Polygon", "coordinates": [[[36.1381,33.951],[36.2981,33.951],[36.2981,34.061],[36.1381,34.061],[36.1381,33.951]]] },
+      "properties": { "id":"LBN-BAA-005","municipality":"Baalbek","district":"Baalbek","governorate":"Baalbek-Hermel","status":"estimated","installations":98,"capacity_p10_mwp":0.54,"capacity_p50_mwp":0.78,"capacity_p90_mwp":1.06,"generation_p10_gwh":0.82,"generation_p50_gwh":1.2,"generation_p90_gwh":1.67,"confidence":0.61,"coverage_km2":4.9,"imagery_date":"2026-02-16","imagery_resolution_m":10 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-TRI-006",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.7997,34.4017],[35.8997,34.4017],[35.8997,34.4717],[35.7997,34.4717],[35.7997,34.4017]]] },
+      "properties": { "id":"LBN-TRI-006","municipality":"Tripoli","district":"Tripoli","governorate":"North Lebanon","status":"detected","installations":137,"capacity_p10_mwp":0.63,"capacity_p50_mwp":0.82,"capacity_p90_mwp":1.04,"generation_p10_gwh":0.91,"generation_p50_gwh":1.21,"generation_p90_gwh":1.58,"confidence":0.79,"coverage_km2":4.6,"imagery_date":"2026-03-09","imagery_resolution_m":0.5 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-SAI-007",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.3315,33.5271],[35.4115,33.5271],[35.4115,33.5871],[35.3315,33.5871],[35.3315,33.5271]]] },
+      "properties": { "id":"LBN-SAI-007","municipality":"Saida","district":"Saida","governorate":"South Lebanon","status":"verified","installations":121,"capacity_p10_mwp":0.58,"capacity_p50_mwp":0.73,"capacity_p90_mwp":0.91,"generation_p10_gwh":0.86,"generation_p50_gwh":1.09,"generation_p90_gwh":1.39,"confidence":0.9,"coverage_km2":3.8,"imagery_date":"2026-05-02","imagery_resolution_m":0.3 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-NAB-008",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.4274,33.3372],[35.5374,33.3372],[35.5374,33.4172],[35.4274,33.4172],[35.4274,33.3372]]] },
+      "properties": { "id":"LBN-NAB-008","municipality":"Nabatieh","district":"Nabatieh","governorate":"Nabatieh","status":"estimated","installations":88,"capacity_p10_mwp":0.39,"capacity_p50_mwp":0.56,"capacity_p90_mwp":0.76,"generation_p10_gwh":0.59,"generation_p50_gwh":0.86,"generation_p90_gwh":1.2,"confidence":0.64,"coverage_km2":4.1,"imagery_date":"2026-02-28","imagery_resolution_m":10 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-TYR-009",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.1588,33.2405],[35.2488,33.2405],[35.2488,33.3005],[35.1588,33.3005],[35.1588,33.2405]]] },
+      "properties": { "id":"LBN-TYR-009","municipality":"Tyre","district":"Tyre","governorate":"South Lebanon","status":"detected","installations":76,"capacity_p10_mwp":0.36,"capacity_p50_mwp":0.48,"capacity_p90_mwp":0.62,"generation_p10_gwh":0.54,"generation_p50_gwh":0.72,"generation_p90_gwh":0.96,"confidence":0.77,"coverage_km2":3.5,"imagery_date":"2026-03-18","imagery_resolution_m":0.5 }
+    },
+    {
+      "type": "Feature",
+      "id": "LBN-ALE-010",
+      "geometry": { "type": "Polygon", "coordinates": [[[35.5542,33.7739],[35.6442,33.7739],[35.6442,33.8439],[35.5542,33.8439],[35.5542,33.7739]]] },
+      "properties": { "id":"LBN-ALE-010","municipality":"Aley","district":"Aley","governorate":"Mount Lebanon","status":"estimated","installations":47,"capacity_p10_mwp":0.19,"capacity_p50_mwp":0.28,"capacity_p90_mwp":0.39,"generation_p10_gwh":0.29,"generation_p50_gwh":0.43,"generation_p90_gwh":0.61,"confidence":0.58,"coverage_km2":3.3,"imagery_date":"2026-01-25","imagery_resolution_m":10 }
+    }
+  ]
+}

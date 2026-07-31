@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Build and coverage
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Environment and local tooling
+.env
+.env.local
+.env.*.local
+!.env.example
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Geospatial outputs and model artifacts
+data/raw/
+data/interim/
+data/processed/
+artifacts/
+models/checkpoints/
+*.tif
+*.tiff
+*.mbtiles
+*.pmtiles
+*.onnx
+*.pt
+*.pth
+
+# Logs
+*.log
+npm-debug.log*
