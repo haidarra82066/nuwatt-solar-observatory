@@ -12,6 +12,7 @@ dependencies = []
 
 [project.scripts]
 nuwatt-pipeline = "nuwatt_pipeline.cli:main"
+nuwatt-publish-grid = "nuwatt_pipeline.publish:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

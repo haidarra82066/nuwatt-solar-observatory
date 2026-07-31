@@ -1,5 +1,7 @@
 export type EvidenceStatus = "detected" | "estimated" | "verified";
 
+export type DataMode = "synthetic-demo" | "model-detections";
+
 export type MapMetric = "capacity" | "installations" | "confidence";
 
 export interface CapacityRange {
@@ -23,6 +25,37 @@ export interface ObservationCell {
   imageryResolutionM: number;
   centroid: [number, number];
   polygon: [number, number][];
+  modelVersion?: string;
+  sourceAssetId?: string;
+  gridSizeM?: number;
+}
+
+export interface ObservationRelease {
+  id: string;
+  dataMode: DataMode;
+  cells: ObservationCell[];
+  disclaimer: string;
+  sourceLabel: string;
+  sourceUrl?: string;
+  gridSizeM?: number;
+  minCellCount?: number;
+  modelVersion?: string;
+}
+
+export interface RegionalCapacityBenchmark {
+  region: string;
+  capacityMwp: number;
+  sharePercent: number;
+}
+
+export interface NationalCapacityBenchmark {
+  asOf: string;
+  published: string;
+  totalCapacityMwp: number;
+  methodology: string;
+  sourceLabel: string;
+  sourceUrl: string;
+  regions: RegionalCapacityBenchmark[];
 }
 
 export interface MunicipalitySummary {
@@ -64,6 +97,9 @@ export interface CellFeatureProperties {
   coverage_km2: number;
   imagery_date: string;
   imagery_resolution_m: number;
+  model_version?: string;
+  source_asset_id?: string;
+  grid_size_m?: number;
 }
 
 export interface CellFeatureCollection {

@@ -1616,6 +1616,112 @@ td strong {
   flex: 0 1 470px;
 }
 
+.benchmark-panel {
+  display: grid;
+  grid-template-columns: 0.72fr 1.28fr;
+  gap: 26px 42px;
+  margin-bottom: 18px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-sm);
+}
+
+.benchmark-summary {
+  display: grid;
+  align-content: start;
+}
+
+.benchmark-summary > span,
+.benchmark-summary small,
+.benchmark-source {
+  color: var(--muted);
+  font-size: 0.58rem;
+}
+
+.benchmark-summary > span {
+  color: var(--cyan-deep);
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.benchmark-summary > strong {
+  margin: 7px 0 4px;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.benchmark-summary p {
+  margin-bottom: 8px;
+  color: var(--slate);
+  font-size: 0.74rem;
+}
+
+.benchmark-summary small {
+  padding: 8px 10px;
+  border-left: 2px solid var(--peach);
+  background: var(--peach-pale);
+}
+
+.benchmark-regions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px 22px;
+}
+
+.benchmark-region {
+  display: grid;
+  grid-template-columns: 92px 1fr 78px;
+  gap: 9px;
+  align-items: center;
+}
+
+.benchmark-region span,
+.benchmark-region strong {
+  font-size: 0.58rem;
+}
+
+.benchmark-region span {
+  color: var(--slate);
+}
+
+.benchmark-region strong {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.benchmark-region > i {
+  overflow: hidden;
+  height: 6px;
+  border-radius: 999px;
+  background: #e8eff1;
+}
+
+.benchmark-region > i > b {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--peach), var(--cyan));
+}
+
+.benchmark-source {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.benchmark-source a {
+  color: var(--cyan-deep);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .dashboard-controls {
   display: flex;
   align-items: flex-end;
@@ -2252,6 +2358,7 @@ td strong {
   .phase-card { grid-template-columns: 55px 1fr; }
   .phase-details { grid-template-columns: 1fr; gap: 25px; }
   .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .benchmark-panel { grid-template-columns: 1fr; }
   .dashboard-intro { display: grid; align-items: start; }
   .dashboard-controls { flex-wrap: wrap; align-items: flex-start; }
   .status-control { order: 3; width: 100%; }
@@ -2281,6 +2388,8 @@ td strong {
   .contract-grid,
   .roadmap-summary,
   .kpi-grid { grid-template-columns: 1fr; }
+  .benchmark-regions { grid-template-columns: 1fr; }
+  .benchmark-source { display: grid; }
   .roadmap-summary > div,
   .roadmap-summary > div:last-child { border-right: 1px solid var(--line); }
   .phase-card { grid-template-columns: 1fr; gap: 12px; }

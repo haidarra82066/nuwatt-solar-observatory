@@ -29,6 +29,22 @@ Required fields:
 Production records also require source asset, model run, aggregation policy, and
 dataset release foreign keys in PostGIS.
 
+## AI-detection publication gate
+
+A public release may use `data_mode=model-detections` only when:
+
+- every restricted input feature has a model run, model version, source asset,
+  imagery date, imagery resolution, and administrative geography;
+- `detected` means the panel footprint was physically visible in imagery no
+  coarser than 1 m/pixel;
+- the source registry decision is `approved` for inference and derived public
+  aggregates;
+- exact detections are aggregated into cells of at least 250 m; and
+- cells with fewer than three detections are suppressed.
+
+Regional market-capacity estimates are benchmark records. They must never be
+spatially distributed into synthetic points or relabelled as AI detections.
+
 ## Invariants
 
 - P10 ≤ P50 ≤ P90 for every uncertainty range.

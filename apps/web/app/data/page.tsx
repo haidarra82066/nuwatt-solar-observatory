@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 const endpoints = [
+  { method: "GET", path: "/api/v1/benchmark", copy: "Published LCEC capacity context, clearly separated from AI-detected locations." },
   { method: "GET", path: "/api/v1/summary", copy: "Release totals, uncertainty ranges, coverage, confidence, and evidence counts." },
   { method: "GET", path: "/api/v1/cells", copy: "GeoJSON evidence cells, filterable by evidence status and governorate." },
   { method: "GET", path: "/api/v1/municipalities", copy: "Municipality-level ranking with P50 capacity, generation, and confidence." },
@@ -39,14 +40,14 @@ export default function DataPage() {
         <article className="release-card primary-release">
           <div><span className="status-badge detected">Current</span><code>demo-2026-01</code></div>
           <h2>Synthetic foundation release</h2>
-          <p>Ten generalized evidence cells exercising the complete public data contract. No real installations are included.</p>
+          <p>Ten generalized synthetic cells exercising the public interface. No AI-detected or measured installations are included.</p>
           <dl><div><dt>Format</dt><dd>GeoJSON</dd></div><div><dt>Licence</dt><dd>CC0 1.0</dd></div><div><dt>Schema</dt><dd>v1</dd></div></dl>
           <a className="button button-primary" href="/data/demo-grid.geojson" download>Download GeoJSON <span>↓</span></a>
         </article>
         <article className="release-card future-release">
           <span className="status-badge estimated">Planned</span>
           <h2>Pilot evidence release</h2>
-          <p>Validated aggregates from four representative Lebanese environments after imagery, privacy, and model gates pass.</p>
+          <p>Privacy-safe 250 m-or-larger aggregates from representative Lebanese environments after imagery, privacy, and model gates pass.</p>
           <ul><li>20-50 km² validated coverage</li><li>Model card and evaluation slices</li><li>Imagery and label provenance</li><li>Correction workflow</li></ul>
         </article>
       </section>

@@ -187,7 +187,10 @@ function round(value: number, digits = 2) {
   return Number(value.toFixed(digits));
 }
 
-export function getSummary(cells: ObservationCell[] = observationCells): ObservatorySummary {
+export function getSummary(
+  cells: ObservationCell[] = observationCells,
+  release = DEMO_RELEASE,
+): ObservatorySummary {
   const evidenceCounts: Record<EvidenceStatus, number> = {
     detected: 0,
     estimated: 0,
@@ -223,7 +226,7 @@ export function getSummary(cells: ObservationCell[] = observationCells): Observa
   );
 
   return {
-    release: DEMO_RELEASE,
+    release,
     installations: totals.installations,
     capacityMwp: {
       p10: round(totals.capacity.p10),
@@ -275,6 +278,9 @@ function toFeatureProperties(cell: ObservationCell): CellFeatureProperties {
     coverage_km2: cell.coverageKm2,
     imagery_date: cell.imageryDate,
     imagery_resolution_m: cell.imageryResolutionM,
+    model_version: cell.modelVersion,
+    source_asset_id: cell.sourceAssetId,
+    grid_size_m: cell.gridSizeM,
   };
 }
 

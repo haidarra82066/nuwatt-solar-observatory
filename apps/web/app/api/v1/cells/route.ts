@@ -1,11 +1,13 @@
 import type { NextRequest } from "next/server";
 
-import { DEMO_RELEASE, observationCells, toFeatureCollection } from "@/lib/observatory";
+import { toFeatureCollection } from "@/lib/observatory";
+import { getObservationRelease } from "@/lib/release";
 import type { EvidenceStatus } from "@/lib/types";
 
 const allowedStatuses = new Set<EvidenceStatus>(["detected", "estimated", "verified"]);
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const release = await getObservationRelease();
   const requestedStatus = request.nextUrl.searchParams.get("status")?.toLowerCase();
   const governorate = request.nextUrl.searchParams.get("governorate")?.toLowerCase();
 
@@ -16,7 +18,7 @@ export function GET(request: NextRequest) {
     );
   }
 
-  const cells = observationCells.filter((cell) => {
+  const cells = release.cells.filter((cell) => {
     const statusMatches = !requestedStatus || cell.status === requestedStatus;
     const governorateMatches = !governorate || cell.governorate.toLowerCase() === governorate;
     return statusMatches && governorateMatches;
@@ -25,8 +27,8 @@ export function GET(request: NextRequest) {
   return Response.json(toFeatureCollection(cells), {
     headers: {
       "Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
-      "X-Data-Release": DEMO_RELEASE,
-      "X-Data-Mode": "synthetic-demo",
+      "X-Data-Release": release.id,
+      "X-Data-Mode": release.dataMode,
     },
   });
 }

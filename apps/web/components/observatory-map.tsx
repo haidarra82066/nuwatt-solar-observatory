@@ -14,6 +14,7 @@ import type {
   CellFeatureCollection,
   CellFeatureProperties,
   CellPointFeatureCollection,
+  DataMode,
   EvidenceStatus,
   MapMetric,
 } from "@/lib/types";
@@ -31,60 +32,14 @@ interface ObservatoryMapProps {
   statuses: EvidenceStatus[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  dataMode: DataMode;
+  gridSizeM?: number;
 }
 
 const metricLabels: Record<MapMetric, string> = {
   capacity: "estimated capacity",
-  installations: "candidate installations",
+  installations: "installation density",
   confidence: "model confidence",
-};
-
-const metricExpressions: Record<MapMetric, unknown> = {
-  capacity: [
-    "interpolate",
-    ["linear"],
-    ["get", "capacity_p50_mwp"],
-    0.2,
-    "#f4c19e",
-    0.65,
-    "#52bcdd",
-    1.35,
-    "#16213e",
-  ],
-  installations: [
-    "interpolate",
-    ["linear"],
-    ["get", "installations"],
-    40,
-    "#f4c19e",
-    120,
-    "#52bcdd",
-    230,
-    "#16213e",
-  ],
-  confidence: [
-    "interpolate",
-    ["linear"],
-    ["get", "confidence"],
-    0.5,
-    "#f2a06b",
-    0.72,
-    "#f4c19e",
-    0.95,
-    "#52bcdd",
-  ],
-};
-
-const heatmapWeightExpressions: Record<MapMetric, unknown> = {
-  capacity: ["interpolate", ["linear"], ["get", "capacity_p50_mwp"], 0.2, 0.15, 1.35, 1],
-  installations: ["interpolate", ["linear"], ["get", "installations"], 40, 0.15, 230, 1],
-  confidence: ["interpolate", ["linear"], ["get", "confidence"], 0.5, 0.15, 0.95, 1],
-};
-
-const clusterRadiusExpressions: Record<MapMetric, unknown> = {
-  capacity: ["interpolate", ["linear"], ["get", "capacity_p50_mwp"], 0.2, 7, 1.35, 17],
-  installations: ["interpolate", ["linear"], ["get", "installations"], 40, 7, 230, 17],
-  confidence: ["interpolate", ["linear"], ["get", "confidence"], 0.5, 7, 0.95, 17],
 };
 
 const evidenceFilterLayers = [
@@ -95,15 +50,83 @@ const evidenceFilterLayers = [
   "candidate-points",
 ];
 
-const metricDomains: Record<MapMetric, [number, number]> = {
-  capacity: [0.2, 1.35],
-  installations: [40, 230],
-  confidence: [0.5, 0.95],
+const defaultMetricBreaks: Record<MapMetric, [number, number, number]> = {
+  capacity: [0.2, 0.65, 1.35],
+  installations: [40, 120, 230],
+  confidence: [0.5, 0.72, 0.95],
 };
 
 function metricValue(properties: CellFeatureProperties, metric: MapMetric) {
   if (metric === "capacity") return properties.capacity_p50_mwp;
   return properties[metric];
+}
+
+function metricProperty(metric: MapMetric) {
+  return metric === "capacity" ? "capacity_p50_mwp" : metric;
+}
+
+function metricBreaks(
+  points: CellPointFeatureCollection,
+  metric: MapMetric,
+  relative: boolean,
+): [number, number, number] {
+  if (!relative) return defaultMetricBreaks[metric];
+  const values = points.features
+    .map((feature) => metricValue(feature.properties, metric))
+    .sort((left, right) => left - right);
+  if (!values.length) return defaultMetricBreaks[metric];
+
+  const low = values[0];
+  const middle = values[Math.floor((values.length - 1) * 0.5)];
+  const upper = values[Math.floor((values.length - 1) * 0.9)];
+  const high = Math.max(upper, low + Math.max(Math.abs(low) * 0.05, 0.000001));
+  const adjustedMiddle = middle > low && middle < high ? middle : (low + high) / 2;
+  return [low, adjustedMiddle, high];
+}
+
+function fillColorExpression(
+  points: CellPointFeatureCollection,
+  metric: MapMetric,
+  relative: boolean,
+) {
+  const [low, middle, high] = metricBreaks(points, metric, relative);
+  return [
+    "interpolate",
+    ["linear"],
+    ["get", metricProperty(metric)],
+    low,
+    metric === "confidence" ? "#f2a06b" : "#f4c19e",
+    middle,
+    "#52bcdd",
+    high,
+    "#16213e",
+  ];
+}
+
+function heatmapWeightExpression(
+  points: CellPointFeatureCollection,
+  metric: MapMetric,
+  relative: boolean,
+) {
+  const [low, , high] = metricBreaks(points, metric, relative);
+  return [
+    "interpolate",
+    ["linear"],
+    ["get", metricProperty(metric)],
+    low,
+    relative ? 0.3 : 0.15,
+    high,
+    1,
+  ];
+}
+
+function pointRadiusExpression(
+  points: CellPointFeatureCollection,
+  metric: MapMetric,
+  relative: boolean,
+) {
+  const [low, , high] = metricBreaks(points, metric, relative);
+  return ["interpolate", ["linear"], ["get", metricProperty(metric)], low, 7, high, 17];
 }
 
 function updateCandidateMarkers(
@@ -112,7 +135,7 @@ function updateCandidateMarkers(
   statuses: EvidenceStatus[],
   selectedId: string | null,
 ) {
-  const [minimum, maximum] = metricDomains[metric];
+  const [minimum, , maximum] = defaultMetricBreaks[metric];
 
   for (const [id, record] of markers) {
     const rawValue = metricValue(record.properties, metric);
@@ -125,7 +148,10 @@ function updateCandidateMarkers(
   }
 }
 
-function popupContent(properties: Record<string, unknown> | CellFeatureProperties) {
+function popupContent(
+  properties: Record<string, unknown> | CellFeatureProperties,
+  dataMode: DataMode,
+) {
   const container = document.createElement("div");
   container.className = "map-popup";
 
@@ -134,13 +160,17 @@ function popupContent(properties: Record<string, unknown> | CellFeaturePropertie
   const title = document.createElement("strong");
   title.textContent = String(properties.municipality);
   const details = document.createElement("p");
-  details.textContent = `${properties.installations} candidate installations · ${properties.capacity_p50_mwp} MWp P50`;
+  details.textContent = `${properties.installations} ${dataMode === "model-detections" ? "AI detections" : "synthetic candidates"} · ${properties.capacity_p50_mwp} MWp P50`;
 
   container.append(eyebrow, title, details);
   return container;
 }
 
-function fitEvidenceExtent(map: MapLibreMap, points: CellPointFeatureCollection) {
+function fitEvidenceExtent(
+  map: MapLibreMap,
+  points: CellPointFeatureCollection,
+  detailedRelease: boolean,
+) {
   const bounds = new maplibregl.LngLatBounds();
   for (const feature of points.features) {
     bounds.extend(feature.geometry.coordinates);
@@ -149,7 +179,7 @@ function fitEvidenceExtent(map: MapLibreMap, points: CellPointFeatureCollection)
   if (!bounds.isEmpty()) {
     map.fitBounds(bounds, {
       padding: { top: 64, right: 64, bottom: 64, left: 64 },
-      maxZoom: 8.25,
+      maxZoom: detailedRelease ? 12 : 8.25,
       duration: 0,
     });
   }
@@ -162,7 +192,10 @@ export default function ObservatoryMap({
   statuses,
   selectedId,
   onSelect,
+  dataMode,
+  gridSizeM,
 }: ObservatoryMapProps) {
+  const detailedRelease = dataMode === "model-detections" || points.features.length > 50;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Map<string, CandidateMarkerRecord>>(new Map());
@@ -225,7 +258,7 @@ export default function ObservatoryMap({
       center: [35.72, 33.84],
       zoom: 7.15,
       minZoom: 6.4,
-      maxZoom: 15,
+      maxZoom: 17,
       maxBounds: [
         [34.6, 32.7],
         [36.9, 34.9],
@@ -244,9 +277,15 @@ export default function ObservatoryMap({
         id: "cells-fill",
         type: "fill",
         source: "observations",
+        minzoom: detailedRelease ? 9 : 0,
         paint: {
-          "fill-color": metricExpressions.capacity as never,
-          "fill-opacity": ["case", ["boolean", ["feature-state", "selected"], false], 0.34, 0.14],
+          "fill-color": fillColorExpression(points, "capacity", detailedRelease) as never,
+          "fill-opacity": [
+            "case",
+            ["boolean", ["feature-state", "selected"], false],
+            detailedRelease ? 0.58 : 0.34,
+            detailedRelease ? 0.32 : 0.14,
+          ],
         },
       });
 
@@ -256,10 +295,14 @@ export default function ObservatoryMap({
         source: "observation-points",
         maxzoom: 13,
         paint: {
-          "heatmap-weight": heatmapWeightExpressions.capacity as never,
-          "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 6, 0.95, 11, 1.7],
-          "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 6, 34, 10, 54, 13, 72],
-          "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 6, 0.9, 11, 0.48, 13, 0],
+          "heatmap-weight": heatmapWeightExpression(points, "capacity", detailedRelease) as never,
+          "heatmap-intensity": detailedRelease
+            ? ["interpolate", ["linear"], ["zoom"], 6, 0.8, 12, 1.45]
+            : ["interpolate", ["linear"], ["zoom"], 6, 0.95, 11, 1.7],
+          "heatmap-radius": detailedRelease
+            ? ["interpolate", ["linear"], ["zoom"], 6, 16, 10, 24, 14, 38]
+            : ["interpolate", ["linear"], ["zoom"], 6, 34, 10, 54, 13, 72],
+          "heatmap-opacity": ["interpolate", ["linear"], ["zoom"], 6, 0.9, 12, 0.52, 14, 0],
           "heatmap-color": [
             "interpolate",
             ["linear"],
@@ -282,6 +325,7 @@ export default function ObservatoryMap({
         id: "cells-outline",
         type: "line",
         source: "observations",
+        minzoom: detailedRelease ? 9 : 0,
         paint: {
           "line-color": ["case", ["boolean", ["feature-state", "selected"], false], "#0f0f23", "#52bcdd"],
           "line-width": ["case", ["boolean", ["feature-state", "selected"], false], 3.4, 1.8],
@@ -293,8 +337,13 @@ export default function ObservatoryMap({
         id: "candidate-halo",
         type: "circle",
         source: "observation-points",
+        minzoom: detailedRelease ? 10 : 0,
         paint: {
-          "circle-radius": ["+", clusterRadiusExpressions.capacity as never, 5] as never,
+          "circle-radius": [
+            "+",
+            pointRadiusExpression(points, "capacity", detailedRelease),
+            5,
+          ] as never,
           "circle-color": "#ffffff",
           "circle-opacity": 0.86,
         },
@@ -304,8 +353,9 @@ export default function ObservatoryMap({
         id: "candidate-points",
         type: "circle",
         source: "observation-points",
+        minzoom: detailedRelease ? 10 : 0,
         paint: {
-          "circle-radius": clusterRadiusExpressions.capacity as never,
+          "circle-radius": pointRadiusExpression(points, "capacity", detailedRelease) as never,
           "circle-color": [
             "match",
             ["get", "status"],
@@ -335,7 +385,7 @@ export default function ObservatoryMap({
         selectRef.current(id);
         new maplibregl.Popup({ offset: 18, closeButton: false })
           .setLngLat(event.lngLat)
-          .setDOMContent(popupContent(feature.properties))
+          .setDOMContent(popupContent(feature.properties, dataMode))
           .addTo(map);
       };
 
@@ -348,7 +398,7 @@ export default function ObservatoryMap({
         map.getCanvas().style.cursor = "";
       });
 
-      for (const feature of points.features) {
+      for (const feature of detailedRelease ? [] : points.features) {
         const element = document.createElement("button");
         element.type = "button";
         element.className = `candidate-marker ${feature.properties.status}`;
@@ -370,7 +420,7 @@ export default function ObservatoryMap({
           selectRef.current(feature.id);
           new maplibregl.Popup({ offset: 22, closeButton: false })
             .setLngLat(feature.geometry.coordinates)
-            .setDOMContent(popupContent(feature.properties))
+            .setDOMContent(popupContent(feature.properties, dataMode))
             .addTo(map);
         });
 
@@ -394,7 +444,7 @@ export default function ObservatoryMap({
       }
 
       map.resize();
-      fitEvidenceExtent(map, points);
+      fitEvidenceExtent(map, points, detailedRelease);
     });
 
     mapRef.current = map;
@@ -406,17 +456,26 @@ export default function ObservatoryMap({
       map.remove();
       mapRef.current = null;
     };
-  }, [data, points]);
+  }, [data, dataMode, detailedRelease, points]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map?.isStyleLoaded() || !map.getLayer("cells-fill")) return;
-    map.setPaintProperty("cells-fill", "fill-color", metricExpressions[metric] as never);
-    map.setPaintProperty("candidate-heat", "heatmap-weight", heatmapWeightExpressions[metric] as never);
-    map.setPaintProperty("candidate-halo", "circle-radius", ["+", clusterRadiusExpressions[metric], 5] as never);
-    map.setPaintProperty("candidate-points", "circle-radius", clusterRadiusExpressions[metric] as never);
+    const pointRadius = pointRadiusExpression(points, metric, detailedRelease);
+    map.setPaintProperty(
+      "cells-fill",
+      "fill-color",
+      fillColorExpression(points, metric, detailedRelease) as never,
+    );
+    map.setPaintProperty(
+      "candidate-heat",
+      "heatmap-weight",
+      heatmapWeightExpression(points, metric, detailedRelease) as never,
+    );
+    map.setPaintProperty("candidate-halo", "circle-radius", ["+", pointRadius, 5] as never);
+    map.setPaintProperty("candidate-points", "circle-radius", pointRadius as never);
     updateCandidateMarkers(markersRef.current, metric, statusesRef.current, selectedIdRef.current);
-  }, [metric]);
+  }, [detailedRelease, metric, points]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -443,12 +502,16 @@ export default function ObservatoryMap({
     if (previousSelectedIdRef.current !== selectedId) {
       const selected = points.features.find((feature) => feature.id === selectedId);
       if (selected) {
-        map.easeTo({ center: selected.geometry.coordinates, zoom: Math.max(map.getZoom(), 9), duration: 700 });
+        map.easeTo({
+          center: selected.geometry.coordinates,
+          zoom: Math.max(map.getZoom(), detailedRelease ? 11 : 9),
+          duration: 700,
+        });
       }
     }
     previousSelectedIdRef.current = selectedId;
     updateCandidateMarkers(markersRef.current, metricRef.current, statusesRef.current, selectedId);
-  }, [data, points, selectedId]);
+  }, [data, detailedRelease, points, selectedId]);
 
   return (
     <div className="observatory-map-wrap">
@@ -456,9 +519,13 @@ export default function ObservatoryMap({
       <div className="map-heatmap-note">
         <Image src="/brand/nuwatt-symbol.webp" alt="" width={34} height={34} />
         <div>
-          <span>Synthetic pilot layer</span>
+          <span>{dataMode === "model-detections" ? "AI detection release" : "Synthetic pilot layer"}</span>
           <strong>Heat = relative {metricLabels[metric]}</strong>
-          <small>Circles mark generalized candidate clusters</small>
+          <small>
+            {dataMode === "model-detections"
+              ? `${gridSizeM ?? 250} m privacy-safe cells; zoom for local detail`
+              : "Circles mark generalized demonstration clusters"}
+          </small>
         </div>
       </div>
     </div>

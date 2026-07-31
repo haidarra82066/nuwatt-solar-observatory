@@ -13,7 +13,12 @@ import {
   toFeatureCollection,
   toPointFeatureCollection,
 } from "@/lib/observatory";
-import type { EvidenceStatus, MapMetric, ObservationCell } from "@/lib/types";
+import type {
+  EvidenceStatus,
+  MapMetric,
+  NationalCapacityBenchmark,
+  ObservationRelease,
+} from "@/lib/types";
 
 const ObservatoryMap = dynamic(() => import("@/components/observatory-map"), {
   ssr: false,
@@ -27,13 +32,21 @@ const metricOptions: Array<{ value: MapMetric; label: string }> = [
   { value: "confidence", label: "Confidence" },
 ];
 
-export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
+export function ObservatoryClient({
+  release,
+  benchmark,
+}: {
+  release: ObservationRelease;
+  benchmark: NationalCapacityBenchmark;
+}) {
+  const cells = release.cells;
+  const isModelRelease = release.dataMode === "model-detections";
   const [metric, setMetric] = useState<MapMetric>("capacity");
   const [statuses, setStatuses] = useState<EvidenceStatus[]>(statusOptions);
   const [selectedId, setSelectedId] = useState<string | null>(cells[0]?.id ?? null);
 
   const visibleCells = useMemo(() => cells.filter((cell) => statuses.includes(cell.status)), [cells, statuses]);
-  const summary = useMemo(() => getSummary(visibleCells), [visibleCells]);
+  const summary = useMemo(() => getSummary(visibleCells, release.id), [visibleCells, release.id]);
   const municipalities = useMemo(() => getMunicipalities(visibleCells), [visibleCells]);
   const featureCollection = useMemo(() => toFeatureCollection(cells), [cells]);
   const pointFeatureCollection = useMemo(() => toPointFeatureCollection(cells), [cells]);
@@ -49,10 +62,15 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
   }
 
   const cards = [
-    { label: "Candidate installations", value: formatNumber(summary.installations, 0), meta: `${visibleCells.length} visible pilot cells`, icon: "panels" as const },
+    {
+      label: isModelRelease ? "AI-detected installations" : "Synthetic candidates",
+      value: formatNumber(summary.installations, 0),
+      meta: `${visibleCells.length} visible ${isModelRelease ? "public grid" : "demo"} cells`,
+      icon: "panels" as const,
+    },
     { label: "Estimated capacity", value: `${formatNumber(summary.capacityMwp.p50, 2)} MWp`, meta: `P10 ${summary.capacityMwp.p10} · P90 ${summary.capacityMwp.p90}`, icon: "capacity" as const },
     { label: "Technical generation", value: `${formatNumber(summary.generationGwh.p50, 1)} GWh`, meta: `Annual P50 estimate`, icon: "generation" as const },
-    { label: "Mapped pilot coverage", value: `${formatNumber(summary.coverageKm2, 1)} km²`, meta: `Mean confidence ${formatPercent(summary.meanConfidence)}`, icon: "coverage" as const },
+    { label: isModelRelease ? "Scanned release coverage" : "Synthetic pilot coverage", value: `${formatNumber(summary.coverageKm2, 1)} km²`, meta: `Mean confidence ${formatPercent(summary.meanConfidence)}`, icon: "coverage" as const },
   ];
 
   return (
@@ -61,10 +79,36 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
         <div>
           <p className="eyebrow">Observatory · {summary.release}</p>
           <h1>Lebanon solar evidence map</h1>
-          <p>Explore synthetic pilot cells through the same contracts intended for the validated MVP.</p>
+          <p>
+            {isModelRelease
+              ? "Explore privacy-safe cells produced from a validated solar-panel detection run."
+              : "The map is still a synthetic interface demonstration; no validated AI detection release is connected yet."}
+          </p>
         </div>
-        <DemoNotice compact />
+        <DemoNotice compact dataMode={release.dataMode} />
       </div>
+
+      <section className="shell benchmark-panel" aria-labelledby="benchmark-title">
+        <div className="benchmark-summary">
+          <span>Published national context · end of 2023</span>
+          <strong id="benchmark-title">{formatNumber(benchmark.totalCapacityMwp, 2)} MWp</strong>
+          <p>Installed capacity estimated by LCEC across all eight governorates.</p>
+          <small>This is a market benchmark—not a count or location map produced by the AI model.</small>
+        </div>
+        <div className="benchmark-regions" aria-label="Capacity by governorate">
+          {benchmark.regions.map((region) => (
+            <div className="benchmark-region" key={region.region}>
+              <span>{region.region}</span>
+              <i><b style={{ width: `${(region.capacityMwp / benchmark.regions[0].capacityMwp) * 100}%` }} /></i>
+              <strong>{formatNumber(region.capacityMwp, 2)} MWp</strong>
+            </div>
+          ))}
+        </div>
+        <div className="benchmark-source">
+          <span>{benchmark.methodology}</span>
+          <a href={benchmark.sourceUrl} target="_blank" rel="noreferrer">Source: {benchmark.sourceLabel} ↗</a>
+        </div>
+      </section>
 
       <div className="shell dashboard-controls" aria-label="Map controls">
         <div className="control-group">
@@ -119,7 +163,7 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
         <section className="map-panel">
           <div className="map-toolbar">
             <div>
-              <span>Candidate density heatmap</span>
+              <span>{isModelRelease ? "AI detection density heatmap" : "Synthetic candidate density demo"}</span>
               <strong>{metricOptions.find((option) => option.value === metric)?.label}</strong>
             </div>
             <div className={`metric-legend legend-${metric}`}>
@@ -133,9 +177,15 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
             statuses={statuses}
             selectedId={selectedId}
             onSelect={setSelectedId}
+            dataMode={release.dataMode}
+            gridSizeM={release.gridSizeM}
           />
           <div className="map-footnote">
-            <span>Heatmap and clusters are generalized synthetic pilot evidence</span>
+            <span>
+              {isModelRelease
+                ? `${release.gridSizeM} m aggregated grid · cells with fewer than ${release.minCellCount} detections suppressed`
+                : "Heatmap and clusters are generalized synthetic pilot evidence—not AI output"}
+            </span>
             <span>Basemap © OpenStreetMap contributors</span>
           </div>
         </section>
@@ -150,7 +200,7 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
                 <p>{selectedCell.district} · {selectedCell.governorate}</p>
               </div>
               <dl className="selection-metrics">
-                <div><dt>Candidate installations</dt><dd>{formatNumber(selectedCell.installations, 0)}</dd></div>
+                <div><dt>{isModelRelease ? "AI detections" : "Synthetic candidates"}</dt><dd>{formatNumber(selectedCell.installations, 0)}</dd></div>
                 <div><dt>Capacity P50</dt><dd>{selectedCell.capacityMwp.p50} MWp</dd></div>
                 <div><dt>Technical yield P50</dt><dd>{selectedCell.generationGwh.p50} GWh</dd></div>
                 <div><dt>Confidence</dt><dd>{formatPercent(selectedCell.confidence)}</dd></div>
@@ -163,7 +213,10 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
               <div className="source-block">
                 <span>Evidence source</span>
                 <p>{selectedCell.imageryResolutionM < 1 ? "High-resolution imagery" : "Low-resolution screening"}</p>
-                <small>{formatDate(selectedCell.imageryDate)} · {selectedCell.imageryResolutionM} m/pixel</small>
+                <small>
+                  {formatDate(selectedCell.imageryDate)} · {selectedCell.imageryResolutionM} m/pixel
+                  {selectedCell.modelVersion ? ` · ${selectedCell.modelVersion}` : ""}
+                </small>
               </div>
             </>
           ) : (
@@ -175,7 +228,7 @@ export function ObservatoryClient({ cells }: { cells: ObservationCell[] }) {
       <div className="shell dashboard-lower-grid">
         <section className="data-panel municipality-panel">
           <div className="panel-heading">
-            <div><span>Municipality view</span><strong>Visible pilot ranking</strong></div>
+            <div><span>Municipality view</span><strong>{isModelRelease ? "Visible AI grid ranking" : "Visible synthetic demo ranking"}</strong></div>
             <a href="/api/v1/municipalities">JSON ↗</a>
           </div>
           <div className="table-wrap">

@@ -14,7 +14,7 @@ Lebanon's distributed photovoltaic fleet.
 - P10/P50/P90 capacity and technical-generation estimates
 - Public JSON and GeoJSON API routes
 - A versioned sample data release and downloadable OpenAPI definition
-- A Python capacity-estimation and GeoJSON-enrichment pipeline
+- A Python capacity-estimation pipeline and privacy-safe AI-detection publisher
 - A PostGIS-ready production schema
 - Docker, continuous integration, tests, governance, privacy, and imagery-policy documentation
 - A phase-gated plan from foundation to a validated public MVP
@@ -61,6 +61,21 @@ python -m services.pipeline.src.nuwatt_pipeline.cli \
   artifacts/enriched-arrays.geojson
 ```
 
+After a licensed model run has produced restricted array-level detections, make
+a public release with at least 250 m cells and sparse-cell suppression:
+
+```bash
+python -m services.pipeline.src.nuwatt_pipeline.publish \
+  restricted/detections.geojson \
+  artifacts/lbn-ai-2027-01.geojson \
+  --release lbn-ai-2027-01 --grid-size-m 250 --min-cell-count 3
+```
+
+Set `NUWATT_RELEASE_GEOJSON_URL` to the immutable public GeoJSON URL to replace
+the synthetic layer. The web app rejects files that lack approved imagery
+licensing, model/source lineage, sufficient image resolution, or privacy-safe
+aggregation.
+
 ## Repository map
 
 ```text
@@ -83,6 +98,7 @@ candidates materially better than a simple contextual baseline.
 The foundation API is available under `/api/v1`:
 
 - `GET /api/v1/health`
+- `GET /api/v1/benchmark`
 - `GET /api/v1/summary`
 - `GET /api/v1/cells?status=detected&governorate=Beirut`
 - `GET /api/v1/municipalities`

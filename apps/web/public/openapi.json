@@ -2,11 +2,18 @@
   "openapi": "3.1.0",
   "info": {
     "title": "NuWatt Open Solar Observatory API",
-    "version": "1.0.0-demo",
-    "description": "Read-only public contracts for versioned solar evidence. The foundation release contains synthetic demonstration data only."
+    "version": "1.1.0",
+    "description": "Read-only public contracts for versioned solar evidence. The default foundation release is synthetic; a configured production release must pass the AI detection, licensing, lineage, and privacy contract."
   },
   "servers": [{ "url": "/api/v1" }],
   "paths": {
+    "/benchmark": {
+      "get": {
+        "summary": "Get the published national capacity benchmark",
+        "description": "Returns market-capacity context that is not an AI count or location dataset.",
+        "responses": { "200": { "description": "LCEC national and governorate capacity context" } }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Check API and release status",
