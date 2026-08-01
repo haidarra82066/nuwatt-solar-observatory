@@ -19,7 +19,7 @@ const resolutionRows = [
 
 const gates = [
   { icon: "coverage" as const, title: "Imagery gate", copy: "Licence, acquisition date, resolution, cloud, shadow, compression, and usable coverage are recorded before inference." },
-  { icon: "panels" as const, title: "Detection gate", copy: "Precision, recall, IoU, calibration, region, roof type, and installation-size performance must meet release thresholds." },
+  { icon: "panels" as const, title: "Model-performance gate", copy: "Precision, recall, IoU, calibration, region, roof type, and installation-size performance must meet release thresholds." },
   { icon: "capacity" as const, title: "Estimation gate", copy: "Packing, projected area, tilt, and module-power density propagate into P10, P50, and P90 capacity ranges." },
   { icon: "confidence" as const, title: "Publication gate", copy: "Sensitive locations are aggregated and every public record carries source, model, evidence, and uncertainty metadata." },
 ];
@@ -30,20 +30,20 @@ export default function MethodologyPage() {
       <section className="subpage-hero methodology-hero">
         <div className="shell subpage-hero-grid">
           <div>
-            <p className="eyebrow eyebrow-light">Methodology · Versioned and reproducible</p>
-            <h1>From image pixels to <em>qualified evidence.</em></h1>
+            <p className="eyebrow eyebrow-light">Methods · Versioned release framework</p>
+            <h1>Methods for <em>geospatial solar evidence.</em></h1>
           </div>
           <p>
-            The method is designed to expose where the system has direct visual evidence, where it is making a
-            statistical inference, and where a human or operational record has verified the result.
+            The publication framework distinguishes source observations, model outputs, statistical estimates,
+            and independently verified records. Each class has separate validation and disclosure requirements.
           </p>
         </div>
       </section>
 
       <section className="section shell">
         <div className="section-heading split-heading compact-heading">
-          <div><p className="eyebrow">The processing chain</p><h2>One pipeline. Five auditable stages.</h2></div>
-          <p>Imagery providers can change without changing the evidence contract. Each input is governed by its own licence and provenance record.</p>
+          <div><p className="eyebrow">Processing chain</p><h2>Five auditable publication stages.</h2></div>
+          <p>Data providers may change without altering the evidence contract. Every input retains its own licence, acquisition, and provenance record.</p>
         </div>
         <PipelineFlow />
       </section>
@@ -51,9 +51,9 @@ export default function MethodologyPage() {
       <section className="section soft-section">
         <div className="shell">
           <div className="section-heading centered-heading">
-            <p className="eyebrow">Sensor reality</p>
-            <h2>AI cannot recover detail the sensor never captured.</h2>
-            <p>Resolution determines which claim the platform can responsibly make.</p>
+            <p className="eyebrow">Spatial resolution</p>
+            <h2>Sensor resolution defines the observable claim.</h2>
+            <p>Model inference cannot substitute for spatial information that was not captured by the source imagery.</p>
           </div>
           <div className="resolution-table table-wrap">
             <table>
@@ -71,10 +71,10 @@ export default function MethodologyPage() {
       <section className="section shell formula-section">
         <div className="formula-copy">
           <p className="eyebrow">Capacity estimation</p>
-          <h2>A range, not a magic number.</h2>
+          <h2>Probabilistic capacity estimation.</h2>
           <p>
             Visible plan-view area is corrected for packing and tilt, then combined with a locally calibrated module
-            power-density distribution. Monte Carlo or quantile models carry those uncertainties into each release.
+            power-density distribution. Monte Carlo or quantile methods propagate these uncertainties to the release.
           </p>
           <div className="formula-card">
             <code>P<sub>DC</sub> = A<sub>detected</sub> × f<sub>packing</sub> × f<sub>tilt</sub> × ρ<sub>module</sub></code>
@@ -92,8 +92,8 @@ export default function MethodologyPage() {
       <section className="section dark-section">
         <div className="shell">
           <div className="section-heading split-heading compact-heading">
-            <div><p className="eyebrow eyebrow-light">Release quality gates</p><h2>No national claim without evidence.</h2></div>
-            <p>Every release can fail a gate. A failed experiment becomes a documented limitation, not a polished but misleading layer.</p>
+            <div><p className="eyebrow eyebrow-light">Publication criteria</p><h2>Evidence requirements for every release.</h2></div>
+            <p>A dataset is published only when its imagery, model performance, estimation method, privacy controls, and licences satisfy the stated release criteria.</p>
           </div>
           <div className="gate-grid">
             {gates.map((gate) => (
@@ -106,7 +106,7 @@ export default function MethodologyPage() {
       <section className="section shell safeguards-grid">
         <div className="section-heading">
           <p className="eyebrow">Privacy and security</p>
-          <h2>Public usefulness without household profiling.</h2>
+          <h2>Privacy-preserving public aggregation.</h2>
           <p>
             Public releases default to grid or municipal aggregation. Exact polygons remain restricted where they can
             expose households, critical infrastructure, or commercial assets.
@@ -122,8 +122,8 @@ export default function MethodologyPage() {
       </section>
 
       <section className="inline-cta shell">
-        <div><p className="eyebrow">Inspect the implementation</p><h2>The contract is already executable.</h2></div>
-        <div className="button-row"><Link className="button button-primary" href="/data">Open data & API</Link><Link className="button button-secondary" href="/roadmap">View delivery gates</Link></div>
+        <div><p className="eyebrow">Technical resources</p><h2>Review the current data contract and release.</h2></div>
+        <div className="button-row"><Link className="button button-primary" href="/data">Data and API</Link><Link className="button button-secondary" href="/observatory">Open evidence atlas</Link></div>
       </section>
     </>
   );

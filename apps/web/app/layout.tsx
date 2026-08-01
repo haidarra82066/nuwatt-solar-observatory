@@ -13,11 +13,11 @@ export const metadata: Metadata = {
     template: "%s · NuWatt Observatory",
   },
   description:
-    "Explore Lebanon's open solar evidence map, real AI-screened large-installation candidates, and published regional market research.",
+    "A versioned public atlas of model-screened solar observations and regional capacity estimates for Lebanon.",
   keywords: [
     "Lebanon solar map",
     "solar observatory",
-    "photovoltaic AI",
+    "photovoltaic model screening",
     "open geospatial data",
     "NuWatt",
   ],
@@ -25,25 +25,25 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     title: "NuWatt Open Solar Observatory",
-    description: "Lebanon solar intelligence, layer by layer.",
+    description: "Versioned geospatial evidence for Lebanon's solar transition.",
     type: "website",
     locale: "en_US",
     url: "/",
     siteName: "NuWatt Open Solar Observatory",
     images: [
       {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "NuWatt Open Solar Observatory — Lebanon solar intelligence, layer by layer",
+        url: "/og-release-01.png",
+        width: 1744,
+        height: 910,
+        alt: "NuWatt Open Solar Observatory — Lebanon Solar Evidence Atlas",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NuWatt Open Solar Observatory",
-    description: "Lebanon solar intelligence, layer by layer.",
-    images: ["/og.png"],
+    description: "Versioned geospatial evidence for Lebanon's solar transition.",
+    images: ["/og-release-01.png"],
   },
 };
 

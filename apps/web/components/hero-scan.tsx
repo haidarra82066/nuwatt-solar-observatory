@@ -11,7 +11,7 @@ export function HeroScan() {
   return (
     <div
       className="hero-scan live-hero-scan"
-      aria-label="Overview of the real January 2024 AI screening result by Lebanon region"
+      aria-label="Summary of the January 2024 model-screening release by Lebanon region"
     >
       <div className="scan-topline">
         <span className="scan-brand">
@@ -50,15 +50,15 @@ export function HeroScan() {
         ))}
         <div className="scan-beam" aria-hidden="true" />
         <div className="map-readout">
-          <span>AI-screened candidates</span>
+          <span>Model-screened candidates</span>
           <strong>21</strong>
           <small>Large installations · 18 public cells</small>
         </div>
       </div>
       <div className="scan-legend">
-        <span><i className="dot detected" /> AI screened</span>
-        <span><i className="dot verified" /> 2 corroborated</span>
-        <span><i className="dot estimated" /> 10 m imagery</span>
+        <span><i className="dot detected" /> Model screened</span>
+        <span><i className="dot verified" /> 2 OSM matches</span>
+        <span><i className="dot estimated" /> Sentinel-2 · 10 m</span>
       </div>
     </div>
   );

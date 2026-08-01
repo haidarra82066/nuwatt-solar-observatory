@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import type {
   GeoJSONSource,
@@ -145,7 +145,7 @@ function screeningPopup(properties: Record<string, unknown>) {
   const regionGroups = String(
     properties.region_groups_label ?? properties.region_groups ?? "Lebanon",
   );
-  appendText(container, "span", `${String(properties.evidence_status).toUpperCase()} · AI SCREENING CELL`);
+  appendText(container, "span", `${String(properties.evidence_status).toUpperCase()} · MODEL SCREENING CELL`);
   appendText(container, "strong", regionGroups);
   appendText(
     container,
@@ -158,7 +158,7 @@ function screeningPopup(properties: Record<string, unknown>) {
 function benchmarkPopup(properties: Record<string, unknown>) {
   const container = document.createElement("div");
   container.className = "map-popup production-popup benchmark-popup";
-  appendText(container, "span", "RESEARCH BENCHMARK · END OF 2023");
+  appendText(container, "span", "REGIONAL BENCHMARK · END OF 2023");
   appendText(container, "strong", String(properties.region));
   appendText(
     container,
@@ -214,6 +214,7 @@ export default function ObservatoryMap({
   const initialBenchmarkPointsRef = useRef(benchmarkPoints);
   const initialBenchmarkRegionsRef = useRef(benchmarkRegions);
   const initialViewRef = useRef(view);
+  const [mapReadout, setMapReadout] = useState({ longitude: 35.78, latitude: 33.88, zoom: 7.1 });
 
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -266,6 +267,13 @@ export default function ObservatoryMap({
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
+    map.addControl(new maplibregl.ScaleControl({ maxWidth: 110, unit: "metric" }), "bottom-left");
+
+    const updateMapReadout = () => {
+      const center = map.getCenter();
+      setMapReadout({ longitude: center.lng, latitude: center.lat, zoom: map.getZoom() });
+    };
+    map.on("moveend", updateMapReadout);
 
     map.on("load", () => {
       for (const feature of initialDataRef.current.features) {
@@ -281,12 +289,12 @@ export default function ObservatoryMap({
         );
         button.setAttribute(
           "aria-label",
-          `${count} AI-screened solar candidate${count === 1 ? "" : "s"} in ${feature.properties.region_groups.join(", ")}`,
+          `${count} model-screened solar candidate${count === 1 ? "" : "s"} in ${feature.properties.region_groups.join(", ")}`,
         );
         const value = document.createElement("strong");
         value.textContent = String(count);
         const label = document.createElement("span");
-        label.textContent = corroborated ? "AI + OSM" : "AI";
+        label.textContent = corroborated ? "MODEL + OSM" : "MODEL";
         button.append(value, label);
         button.addEventListener("click", (event) => {
           event.stopPropagation();
@@ -315,7 +323,7 @@ export default function ObservatoryMap({
         );
         button.setAttribute(
           "aria-label",
-          `${region.region}: ${region.capacityMwp.toLocaleString("en-GB", { maximumFractionDigits: 2 })} MWp regional research estimate`,
+          `${region.region}: ${region.capacityMwp.toLocaleString("en-GB", { maximumFractionDigits: 2 })} MWp regional capacity estimate`,
         );
         const value = document.createElement("strong");
         value.textContent = `${Math.round(region.capacityMwp)}`;
@@ -532,6 +540,7 @@ export default function ObservatoryMap({
       setLayerGroupVisibility(map, screeningLayerIds, initialViewRef.current !== "research");
       setLayerGroupVisibility(map, benchmarkLayerIds, initialViewRef.current !== "ai");
       fitLebanon(map);
+      updateMapReadout();
     });
 
     return () => {
@@ -652,19 +661,26 @@ export default function ObservatoryMap({
         ref={containerRef}
         className="production-map"
         role="application"
-        aria-label="Interactive map of Lebanon AI-screened solar candidates and regional research benchmarks"
+        aria-label="Interactive map of Lebanon model-screened solar candidates and regional capacity benchmarks"
       />
+      <div className="map-reference-grid" aria-hidden="true" />
+      <div className="map-centre-reticle" aria-hidden="true"><i /><i /></div>
       <div className="production-map-status">
         <span className="live-pulse" />
         <div>
-          <strong>{data.features.length} public cells visible</strong>
-          <small>5 km privacy-safe aggregation</small>
+          <strong>{data.features.length} screening cells</strong>
+          <small>Public aggregation · 5 km grid</small>
         </div>
       </div>
+      <div className="map-reference-readout" aria-label="Current map centre and zoom">
+        <span>Map centre · WGS84</span>
+        <strong>{mapReadout.latitude.toFixed(4)}° N&nbsp;&nbsp;{mapReadout.longitude.toFixed(4)}° E</strong>
+        <small>Zoom {mapReadout.zoom.toFixed(1)} · EPSG:4326</small>
+      </div>
       <div className="production-map-legend" aria-label="Map legend">
-        {view !== "research" && <span><i className="legend-screened" /> AI screened</span>}
-        {view !== "research" && <span><i className="legend-corroborated" /> Corroborated</span>}
-        {view !== "ai" && <span><i className="legend-benchmark" /> LCEC region estimate</span>}
+        {view !== "research" && <span><i className="legend-screened" /> Model-screened</span>}
+        {view !== "research" && <span><i className="legend-corroborated" /> OSM corroborated</span>}
+        {view !== "ai" && <span><i className="legend-benchmark" /> LCEC benchmark</span>}
       </div>
     </div>
   );

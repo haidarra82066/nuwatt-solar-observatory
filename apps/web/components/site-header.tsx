@@ -3,10 +3,10 @@ import Link from "next/link";
 import { BrandMark } from "@/components/brand-mark";
 
 const navigation = [
-  { href: "/observatory", label: "Map" },
-  { href: "/observatory#insights", label: "Insights" },
-  { href: "/methodology", label: "Methodology" },
-  { href: "/data", label: "Open data" },
+  { href: "/observatory", label: "Evidence atlas" },
+  { href: "/observatory#insights", label: "Regional statistics" },
+  { href: "/methodology", label: "Methods" },
+  { href: "/data", label: "Data & API" },
 ];
 
 export function SiteHeader() {
@@ -14,7 +14,7 @@ export function SiteHeader() {
     <header className="site-header production-header">
       <div className="shell header-inner">
         <BrandMark />
-        <span className="header-release-status"><i /> Public beta</span>
+        <span className="header-release-status"><i /> Public release</span>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navigation.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
         </nav>
@@ -22,7 +22,7 @@ export function SiteHeader() {
           NuWatt.com <span aria-hidden="true">↗</span>
         </a>
         <Link className="button button-small button-brand desktop-cta" href="/observatory">
-          Explore the map <span aria-hidden="true">→</span>
+          Open atlas <span aria-hidden="true">→</span>
         </Link>
         <details className="mobile-menu">
           <summary aria-label="Open navigation">Menu</summary>

@@ -8,19 +8,19 @@ export function SiteFooter() {
       <div className="shell footer-grid">
         <div>
           <BrandMark />
-          <p className="footer-note">Open, source-aware solar intelligence for Lebanon&apos;s energy transition.</p>
-          <span className="footer-live-state"><i /> Public screening release online</span>
+          <p className="footer-note">Versioned geospatial evidence for Lebanon&apos;s solar transition.</p>
+          <span className="footer-live-state"><i /> Public release 01 available</span>
         </div>
         <div>
-          <p className="footer-label">Observatory</p>
-          <Link href="/observatory">Interactive map</Link>
-          <Link href="/observatory#insights">Regional insights</Link>
+          <p className="footer-label">Atlas</p>
+          <Link href="/observatory">Geospatial explorer</Link>
+          <Link href="/observatory#insights">Regional statistics</Link>
           <Link href="/data">Current release</Link>
         </div>
         <div>
           <p className="footer-label">Evidence</p>
           <Link href="/methodology">Methodology</Link>
-          <Link href="/data">Data catalogue</Link>
+          <Link href="/data">Release catalogue</Link>
           <a href="/api/v1/screening">Screening GeoJSON</a>
           <a href="/openapi.json">OpenAPI</a>
         </div>
@@ -33,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="shell footer-bottom">
         <span>© 2026 NuWatt</span>
-        <span>Satlas screening snapshot January 2024 · LCEC benchmark end 2023</span>
+        <span>Satlas screening snapshot: January 2024 · LCEC benchmark: end 2023</span>
       </div>
     </footer>
   );

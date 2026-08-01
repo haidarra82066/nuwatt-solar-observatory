@@ -4,6 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "AI Experiments",
   description: "Versioned NuWatt solar-observatory experiments and their validation outcomes.",
+  robots: { index: false, follow: false },
 };
 
 export default function ExperimentsPage() {

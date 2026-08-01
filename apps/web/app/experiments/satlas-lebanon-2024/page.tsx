@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Lebanon AI Solar Screening Experiment",
   description:
     "A privacy-safe map of large solar-installation candidates screened from open Sentinel-2 imagery.",
+  robots: { index: false, follow: false },
 };
 
 const regions = [

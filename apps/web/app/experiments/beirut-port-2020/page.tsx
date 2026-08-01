@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Beirut Port Open-Imagery Experiment",
   description:
     "The validated result of NuWatt's first free Lebanon solar-panel inference experiment.",
+  robots: { index: false, follow: false },
 };
 
 const resultMetrics = [

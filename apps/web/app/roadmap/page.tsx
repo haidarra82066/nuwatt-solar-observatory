@@ -10,12 +10,12 @@ const phases = [
   {
     number: "00", duration: "2 weeks", title: "Foundation", status: "Built in this repository",
     goal: "Fix product claims, architecture, evidence states, contracts, and delivery gates.",
-    deliverables: ["Runnable public platform", "Synthetic data and API", "PostGIS schema", "Pipeline scaffold", "CI and governance"],
-    gate: "Repository builds cleanly and every demo value is visibly non-production.",
+    deliverables: ["Runnable public platform", "Versioned data and API contracts", "PostGIS schema", "Pipeline scaffold", "CI and governance"],
+    gate: "The repository builds cleanly and each public value has an explicit evidence classification.",
   },
   {
-    number: "01", duration: "2-3 weeks", title: "Free-data feasibility", status: "In progress · two experiments complete",
-    goal: "Test free nationwide inputs and identify legal high-resolution pilot sources.",
+    number: "01", duration: "2-3 weeks", title: "Open-data feasibility", status: "Initial national screening complete",
+    goal: "Evaluate open national inputs and identify legally usable high-resolution pilot sources.",
     deliverables: ["Lebanon AOI and building inventory", "Sentinel-2 time-series pipeline", "Imagery licence registry", "Candidate baseline", "Pilot-area scorecard"],
     gate: "Four representative 5-12 km² areas have legal imagery and sufficient ground truth.",
   },
@@ -47,7 +47,7 @@ const phases = [
 
 const mvpDefinition = [
   "20-50 km² across dense urban, suburban, rural/agricultural, and mixed commercial settings",
-  "Detected, AI-estimated, and verified evidence remain separately filterable",
+  "Detected, model-estimated, and verified evidence remain separately filterable",
   "P10/P50/P90 capacity and technical-yield estimates are calibrated against local records",
   "Precision, recall, IoU, calibration, and performance by region/system size are published",
   "Aggregated public data, stable API, release downloads, provenance, and correction workflow",
@@ -59,8 +59,8 @@ export default function RoadmapPage() {
     <>
       <section className="subpage-hero roadmap-hero">
         <div className="shell subpage-hero-grid">
-          <div><p className="eyebrow eyebrow-light">Delivery plan · Phase gated</p><h1>A fully working MVP without skipping the <em>hard experiment.</em></h1></div>
-          <p>The estimated path from repository foundation to validated public pilot is 18-25 weeks, with national scaling conditional on model and imagery evidence.</p>
+          <div><p className="eyebrow eyebrow-light">Implementation programme · Phase gated</p><h1>Delivery framework for a <em>validated public MVP.</em></h1></div>
+          <p>The indicative path from platform foundation to a validated public pilot is 18–25 weeks. National scaling remains conditional on imagery access and measured model performance.</p>
         </div>
       </section>
 
@@ -72,7 +72,7 @@ export default function RoadmapPage() {
       </section>
 
       <section className="section shell roadmap-list">
-        <div className="section-heading centered-heading"><p className="eyebrow">Critical path</p><h2>Build, test, earn the right to scale.</h2></div>
+        <div className="section-heading centered-heading"><p className="eyebrow">Critical path</p><h2>Phased delivery and acceptance criteria.</h2></div>
         {phases.map((phase) => (
           <article className="phase-card" key={phase.number}>
             <div className="phase-number">{phase.number}</div>
@@ -90,15 +90,15 @@ export default function RoadmapPage() {
 
       <section className="section dark-section">
         <div className="shell mvp-definition">
-          <div className="section-heading"><p className="eyebrow eyebrow-light">Definition of done</p><h2>The MVP is a validated release, not merely a map.</h2><p>These six conditions must all be true before the product is described as a working public MVP.</p></div>
+          <div className="section-heading"><p className="eyebrow eyebrow-light">MVP acceptance criteria</p><h2>Requirements for a validated public release.</h2><p>All six conditions must be satisfied before the pilot is classified as a working public MVP.</p></div>
           <ol>{mvpDefinition.map((item, index) => <li key={item}><span>0{index + 1}</span><p>{item}</p></li>)}</ol>
         </div>
       </section>
 
       <section className="section shell team-section">
         <div className="section-heading split-heading compact-heading">
-          <div><p className="eyebrow">Minimum delivery team</p><h2>Small, cross-functional, locally grounded.</h2></div>
-          <p>AI can accelerate implementation and labelling, but sensor limits, licences, validation, and publication decisions remain human responsibilities.</p>
+          <div><p className="eyebrow">Delivery capability</p><h2>Cross-functional and locally grounded.</h2></div>
+          <p>Machine learning can accelerate implementation and labelling, but sensor limits, licences, validation, and publication decisions remain accountable human responsibilities.</p>
         </div>
         <div className="role-grid">
           {["Product & partnerships", "Geospatial/data engineering", "ML/computer vision", "Full-stack platform", "Solar modelling", "Annotation & field validation", "Privacy/legal review"].map((role) => <span key={role}>{role}</span>)}
@@ -106,8 +106,8 @@ export default function RoadmapPage() {
       </section>
 
       <section className="inline-cta shell">
-        <div><p className="eyebrow">Foundation is live</p><h2>Explore the product contract now.</h2></div>
-        <div className="button-row"><Link className="button button-primary" href="/observatory">Open observatory</Link><Link className="button button-secondary" href="/methodology">Review methodology</Link></div>
+        <div><p className="eyebrow">Current release</p><h2>Review the implemented evidence framework.</h2></div>
+        <div className="button-row"><Link className="button button-primary" href="/observatory">Open evidence atlas</Link><Link className="button button-secondary" href="/methodology">Review methodology</Link></div>
       </section>
     </>
   );

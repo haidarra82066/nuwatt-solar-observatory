@@ -27,15 +27,15 @@ const ObservatoryMap = dynamic(() => import("@/components/observatory-map"), {
   loading: () => (
     <div className="production-map production-map-loading">
       <span className="ai-loader" />
-      <strong>Loading Lebanon&apos;s evidence layers</strong>
+      <strong>Loading geospatial evidence</strong>
     </div>
   ),
 });
 
 const views: Array<{ value: ObservatoryView; label: string; description: string }> = [
-  { value: "combined", label: "Combined", description: "AI evidence + research" },
-  { value: "ai", label: "AI screening", description: "21 large-solar candidates" },
-  { value: "research", label: "Research", description: "LCEC regional capacity" },
+  { value: "ai", label: "Screening", description: "21 mapped candidates" },
+  { value: "combined", label: "Combined", description: "Screening + benchmark" },
+  { value: "research", label: "Benchmark", description: "LCEC regional capacity" },
 ];
 
 const sourceRegionLabels: Record<string, string> = {
@@ -43,7 +43,7 @@ const sourceRegionLabels: Record<string, string> = {
 };
 
 function statusLabel(status: ScreeningEvidenceStatus) {
-  return status === "corroborated" ? "OSM corroborated" : "AI screened";
+  return status === "corroborated" ? "OSM corroborated" : "Model screened";
 }
 
 function footprint(value: number) {
@@ -60,7 +60,7 @@ export function ObservatoryClient({
   const defaultCell =
     release.features.find((feature) => feature.properties.evidence_status === "corroborated") ??
     release.features[0];
-  const [view, setView] = useState<ObservatoryView>("combined");
+  const [view, setView] = useState<ObservatoryView>("ai");
   const [metric, setMetric] = useState<ScreeningMetric>("candidates");
   const [theme, setTheme] = useState<MapTheme>("dark");
   const [region, setRegion] = useState("all");
@@ -140,36 +140,36 @@ export function ObservatoryClient({
         <div className="shell observatory-command-grid">
           <div className="observatory-command-copy">
             <div className="release-kicker">
-              <span className="live-pulse" /> Public evidence release · Updated 1 August 2026
+              <span className="live-pulse" /> Public release 01 · Updated 1 August 2026
             </div>
-            <h1>Lebanon solar intelligence, <em>layer by layer.</em></h1>
+            <h1>Lebanon Solar <em>Evidence Atlas.</em></h1>
             <p>
-              Explore real AI-screened large-solar candidates alongside Lebanon&apos;s published
-              regional market estimates. Each layer keeps its source, date, and limits visible.
+              A geospatial record of model-screened large solar installations, independent
+              corroboration, and published regional capacity estimates for Lebanon.
             </p>
           </div>
           <div className="observatory-command-mark">
             <Image src="/brand/nuwatt-symbol.webp" alt="" width={54} height={54} priority />
-            <div><span>NuWatt evidence engine</span><strong>Public beta · Lebanon</strong></div>
+            <div><span>NuWatt evidence programme</span><strong>Release 01 · Lebanon</strong></div>
           </div>
         </div>
         <div className="shell evidence-kpi-rail" aria-label="Latest solar evidence summary">
-          <article><span>Published market context</span><strong>{formatNumber(benchmark.totalCapacityMwp, 2)} <small>MWp</small></strong><p>LCEC estimate · end 2023</p></article>
-          <article><span>AI-screened candidates</span><strong>{release.metadata.candidate_count}</strong><p>Large installations · Jan 2024</p></article>
-          <article><span>Independent corroboration</span><strong>{release.metadata.corroborated_candidate_count}</strong><p>Candidate facilities · OSM</p></article>
-          <article><span>Public evidence cells</span><strong>{release.features.length}</strong><p>{release.metadata.grid_size_m / 1000} km privacy-safe grid</p></article>
+          <article><span>Regional capacity estimate</span><strong>{formatNumber(benchmark.totalCapacityMwp, 2)} <small>MWp</small></strong><p>LCEC · cumulative to end 2023</p></article>
+          <article><span>Model-screened candidates</span><strong>{release.metadata.candidate_count}</strong><p>Large installations · Jan 2024</p></article>
+          <article><span>OSM corroboration</span><strong>{release.metadata.corroborated_candidate_count}</strong><p>Spatial matches within 30 m</p></article>
+          <article><span>Published grid cells</span><strong>{release.features.length}</strong><p>{release.metadata.grid_size_m / 1000} km public aggregation</p></article>
         </div>
       </section>
 
       <section className="shell observatory-workspace" aria-labelledby="map-title">
         <header className="workspace-heading">
           <div>
-            <p className="eyebrow">National evidence explorer</p>
-            <h2 id="map-title">One map. Two distinct truths.</h2>
+            <p className="eyebrow">Geospatial evidence explorer</p>
+            <h2 id="map-title">Screening observations and regional benchmarks.</h2>
           </div>
           <p>
-            AI cells are mapped screening evidence. LCEC circles are regional research totals and
-            do not represent installation locations. Click any mark for its record.
+            Screening cells indicate mapped model outputs. LCEC markers represent regional totals,
+            not installation coordinates. Select a marker to inspect its evidence record.
           </p>
         </header>
 
@@ -177,11 +177,11 @@ export function ObservatoryClient({
           <aside className="evidence-controls" aria-label="Evidence map controls">
             <div className="console-brandline">
               <Image src="/brand/nuwatt-symbol.webp" alt="" width={30} height={30} />
-              <div><span>Evidence console</span><strong>{visibleCandidates} candidates visible</strong></div>
+              <div><span>Map controls</span><strong>{visibleCandidates} candidates in view</strong></div>
             </div>
 
             <fieldset className="console-fieldset">
-              <legend>Layer view</legend>
+              <legend>Evidence layer</legend>
               <div className="layer-view-list">
                 {views.map((option) => (
                   <button
@@ -199,7 +199,7 @@ export function ObservatoryClient({
             </fieldset>
 
             <fieldset className="console-fieldset" disabled={view === "research"}>
-              <legend>AI heat metric</legend>
+              <legend>Screening intensity</legend>
               <div className="console-segmented">
                 <button type="button" className={metric === "candidates" ? "active" : ""} onClick={() => setMetric("candidates")}>Candidates</button>
                 <button type="button" className={metric === "footprint" ? "active" : ""} onClick={() => setMetric("footprint")}>Footprint</button>
@@ -207,7 +207,7 @@ export function ObservatoryClient({
             </fieldset>
 
             <fieldset className="console-fieldset" disabled={view === "research"}>
-              <legend>Filter AI evidence</legend>
+              <legend>Screening filters</legend>
               <label className="console-select">
                 <span>Region</span>
                 <select value={region} onChange={(event) => chooseRegion(event.target.value)}>
@@ -220,26 +220,26 @@ export function ObservatoryClient({
               </label>
               <div className="evidence-filter-buttons">
                 <button type="button" className={status === "all" ? "active" : ""} onClick={() => chooseStatus("all")}>All</button>
-                <button type="button" className={status === "screened" ? "active" : ""} onClick={() => chooseStatus("screened")}><i className="screened" /> Screened</button>
-                <button type="button" className={status === "corroborated" ? "active" : ""} onClick={() => chooseStatus("corroborated")}><i className="corroborated" /> Corroborated</button>
+                <button type="button" className={status === "screened" ? "active" : ""} onClick={() => chooseStatus("screened")}><i className="screened" /> Model only</button>
+                <button type="button" className={status === "corroborated" ? "active" : ""} onClick={() => chooseStatus("corroborated")}><i className="corroborated" /> OSM match</button>
               </div>
             </fieldset>
 
             <fieldset className="console-fieldset console-map-style">
-              <legend>Map appearance</legend>
+              <legend>Basemap</legend>
               <div className="console-segmented">
-                <button type="button" className={theme === "dark" ? "active" : ""} onClick={() => setTheme("dark")}>AI dark</button>
-                <button type="button" className={theme === "light" ? "active" : ""} onClick={() => setTheme("light")}>Map light</button>
+                <button type="button" className={theme === "dark" ? "active" : ""} onClick={() => setTheme("dark")}>Dark</button>
+                <button type="button" className={theme === "light" ? "active" : ""} onClick={() => setTheme("light")}>Light</button>
               </div>
             </fieldset>
 
-            <button type="button" className="console-reset" onClick={resetMap}>Reset national view <span>↗</span></button>
+            <button type="button" className="console-reset" onClick={resetMap}>Reset national extent <span>↗</span></button>
           </aside>
 
           <div className="evidence-map-stage">
             <div className="map-stage-topline">
-              <div><span className="live-pulse" /> Interactive evidence surface</div>
-              <span>Lebanon · 33.05–34.70° N</span>
+              <div><span className="live-pulse" /> Geospatial evidence surface</div>
+              <span>LBN · WGS84 · EPSG:4326</span>
             </div>
             <ObservatoryMap
               data={filteredRelease}
@@ -253,7 +253,7 @@ export function ObservatoryClient({
             />
             <div className="map-stage-footline">
               <span>Basemap © OpenStreetMap contributors</span>
-              <span>Exact Satlas source polygons withheld · public cells are 5 km</span>
+              <span>Restricted source polygons · public geometry aggregated to 5 km</span>
             </div>
           </div>
 
@@ -267,25 +267,25 @@ export function ObservatoryClient({
                   <p>{selectedCell.properties.governorates.join(", ")}</p>
                 </div>
                 <dl className="inspector-metrics">
-                  <div><dt>AI-screened candidates</dt><dd>{selectedCell.properties.candidate_count}</dd></div>
+                  <div><dt>Model-screened candidates</dt><dd>{selectedCell.properties.candidate_count}</dd></div>
                   <div><dt>OSM corroborated</dt><dd>{selectedCell.properties.corroborated_candidate_count}</dd></div>
                   <div><dt>Facility footprint</dt><dd>{footprint(selectedCell.properties.candidate_footprint_area_m2)}</dd></div>
                   <div><dt>Public cell</dt><dd>{selectedCell.properties.grid_size_m / 1000} × {selectedCell.properties.grid_size_m / 1000} km</dd></div>
                 </dl>
                 <div className="inspector-evidence-block">
-                  <span>Imagery evidence</span>
+                  <span>Source imagery</span>
                   <strong>Sentinel-2 · {selectedCell.properties.review_imagery_resolution_m} m/pixel</strong>
                   <small>Reviewed {formatDate(selectedCell.properties.review_imagery_date)} · source snapshot {selectedCell.properties.source_snapshot}</small>
                 </div>
                 <div className="inspector-withheld">
                   <span>Capacity</span><strong>Not estimated</strong>
-                  <p>Facility footprints include spacing and access areas. Converting them to MWp would create false precision.</p>
+                  <p>The source footprint includes spacing and access areas; it does not support a defensible MWp estimate.</p>
                 </div>
               </>
             ) : selectedBenchmark ? (
               <>
                 <div className="inspector-head benchmark-record">
-                  <span className="status-badge benchmark">Research benchmark</span>
+                  <span className="status-badge benchmark">Regional benchmark</span>
                   <small>END 2023 · LCEC</small>
                   <h3>{selectedBenchmark.region}</h3>
                   <p>Regional installed-capacity estimate</p>
@@ -300,12 +300,12 @@ export function ObservatoryClient({
                   <small>Company surveys, customs and import data, stock, and implementation assumptions.</small>
                 </div>
                 <div className="inspector-withheld research-note">
-                  <span>Map meaning</span><strong>Regional context only</strong>
-                  <p>The circle is anchored at a representative regional point. It does not locate individual solar systems.</p>
+                  <span>Spatial interpretation</span><strong>Regional context only</strong>
+                  <p>The marker is a regional label anchor and does not indicate an installation location.</p>
                 </div>
               </>
             ) : (
-              <div className="inspector-empty"><span>Choose a mark</span><p>Select an AI cell or research circle to inspect its provenance and limits.</p></div>
+              <div className="inspector-empty"><span>Select a record</span><p>Choose a screening cell or benchmark marker to inspect its provenance and publication limits.</p></div>
             )}
           </aside>
         </div>
@@ -314,12 +314,12 @@ export function ObservatoryClient({
       <section className="observatory-intelligence-section" id="insights">
         <div className="shell">
           <header className="workspace-heading intelligence-heading">
-            <div><p className="eyebrow eyebrow-light">What the evidence says</p><h2>National scale. Regional signals.</h2></div>
-            <p>These two comparisons use different units and populations. They are presented side by side for context, never combined into one total.</p>
+            <div><p className="eyebrow eyebrow-light">Regional comparison</p><h2>Installed-capacity context and mapped screening observations.</h2></div>
+            <p>The two series use different units and observation populations. They are shown in parallel and are not combined.</p>
           </header>
           <div className="intelligence-grid">
             <article className="evidence-chart research-chart">
-              <header><div><span>Research context</span><h3>Regional installed capacity</h3></div><strong>{formatNumber(benchmark.totalCapacityMwp, 2)} MWp</strong></header>
+              <header><div><span>Published benchmark</span><h3>Regional installed-capacity estimate</h3></div><strong>{formatNumber(benchmark.totalCapacityMwp, 2)} MWp</strong></header>
               <p className="chart-subtitle">LCEC estimate by governorate · cumulative capacity at end of 2023</p>
               <div className="horizontal-bars">
                 {benchmark.regions.map((item) => (
@@ -330,11 +330,11 @@ export function ObservatoryClient({
                   </button>
                 ))}
               </div>
-              <footer>Source: LCEC Solar PV Status Report 2023 · market estimate, not AI detection</footer>
+              <footer>Source: LCEC Solar PV Status Report 2023 · regional market estimate, not mapped detection</footer>
             </article>
 
             <article className="evidence-chart ai-chart">
-              <header><div><span>AI screening result</span><h3>Large-solar candidates by region</h3></div><strong>{release.metadata.candidate_count} candidates</strong></header>
+              <header><div><span>Model screening release</span><h3>Large-installation candidates by region</h3></div><strong>{release.metadata.candidate_count} candidates</strong></header>
               <p className="chart-subtitle">Satlas January 2024 source snapshot · 18 public grid cells</p>
               <div className="horizontal-bars">
                 {regionSummaries.map((item) => (
@@ -351,8 +351,8 @@ export function ObservatoryClient({
                   </button>
                 ))}
               </div>
-              <div className="chart-evidence-key"><span><i className="screened" /> {release.metadata.candidate_count - release.metadata.corroborated_candidate_count} screened</span><span><i className="corroborated" /> {release.metadata.corroborated_candidate_count} corroborated</span></div>
-              <footer>Source: Satlas AI screening · 10 m Sentinel-2 · large installations only</footer>
+              <div className="chart-evidence-key"><span><i className="screened" /> {release.metadata.candidate_count - release.metadata.corroborated_candidate_count} model-only</span><span><i className="corroborated" /> {release.metadata.corroborated_candidate_count} OSM-matched</span></div>
+              <footer>Source: Satlas model screening · Sentinel-2 at 10 m · large installations only</footer>
             </article>
           </div>
         </div>
@@ -360,16 +360,16 @@ export function ObservatoryClient({
 
       <section className="shell evidence-ledger-section">
         <header className="workspace-heading ledger-heading">
-          <div><p className="eyebrow">Evidence ledger</p><h2>Every layer carries its receipt.</h2></div>
-          <p>Dates, resolutions, licences, validation state, and allowed claims stay attached to the public release.</p>
+          <div><p className="eyebrow">Release documentation</p><h2>Sources, licences, and publication limits.</h2></div>
+          <p>Each published layer records its acquisition period, spatial resolution, licence, validation state, and permitted interpretation.</p>
         </header>
         <div className="evidence-ledger-grid">
-          <article><span>01 · AI source</span><h3>Satlas renewable infrastructure</h3><dl><div><dt>Snapshot</dt><dd>January 2024</dd></div><div><dt>Sensor</dt><dd>Sentinel-2 · 10 m</dd></div><div><dt>Licence</dt><dd>ODC-BY 1.0</dd></div><div><dt>Claim</dt><dd>Screened candidates</dd></div></dl></article>
+          <article><span>01 · Screening source</span><h3>Satlas renewable infrastructure</h3><dl><div><dt>Snapshot</dt><dd>January 2024</dd></div><div><dt>Sensor</dt><dd>Sentinel-2 · 10 m</dd></div><div><dt>Licence</dt><dd>ODC-BY 1.0</dd></div><div><dt>Claim</dt><dd>Screened candidates</dd></div></dl></article>
           <article><span>02 · Independent check</span><h3>OpenStreetMap solar features</h3><dl><div><dt>Matched facilities</dt><dd>2 of 21</dd></div><div><dt>Distance</dt><dd>Within 30 m</dd></div><div><dt>Licence</dt><dd>ODbL 1.0</dd></div><div><dt>Missing match</dt><dd>Not negative evidence</dd></div></dl></article>
           <article><span>03 · Market context</span><h3>LCEC Solar PV Status 2023</h3><dl><div><dt>National estimate</dt><dd>1,081.27 MWp</dd></div><div><dt>Regions</dt><dd>8 governorates</dd></div><div><dt>Method</dt><dd>Market assessment</dd></div><div><dt>Claim</dt><dd>Regional context</dd></div></dl></article>
         </div>
         <div className="observatory-download-row">
-          <div><span>Open release</span><strong>Inspect, download, and reproduce the public evidence.</strong></div>
+          <div><span>Data access</span><strong>Inspect the versioned public release and its machine-readable records.</strong></div>
           <div className="button-row">
             <a className="button button-primary" href="/api/v1/screening">Open GeoJSON ↓</a>
             <Link className="button button-secondary" href="/methodology">Read methodology</Link>
