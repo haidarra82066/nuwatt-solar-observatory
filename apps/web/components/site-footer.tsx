@@ -15,13 +15,13 @@ export function SiteFooter() {
           <p className="footer-label">Observatory</p>
           <Link href="/observatory">Interactive map</Link>
           <Link href="/observatory#insights">Regional insights</Link>
-          <Link href="/experiments">Experiment log</Link>
+          <Link href="/data">Current release</Link>
         </div>
         <div>
           <p className="footer-label">Evidence</p>
           <Link href="/methodology">Methodology</Link>
           <Link href="/data">Data catalogue</Link>
-          <a href="/data/experiments/lbn-satlas-screening-2024-01-v1.geojson">Screening GeoJSON</a>
+          <a href="/api/v1/screening">Screening GeoJSON</a>
           <a href="/openapi.json">OpenAPI</a>
         </div>
         <div>

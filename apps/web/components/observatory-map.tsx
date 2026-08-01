@@ -6,6 +6,7 @@ import type {
   GeoJSONSource,
   Map as MapLibreMap,
   MapLayerMouseEvent,
+  Marker,
   StyleSpecification,
 } from "maplibre-gl";
 
@@ -51,6 +52,51 @@ const screeningLayerIds = [
 ];
 const benchmarkLayerIds = ["benchmark-halo", "benchmark-points"];
 
+interface EvidenceMarker {
+  element: HTMLButtonElement;
+  marker: Marker;
+}
+
+function setMarkerVisibility(
+  markers: Map<string, EvidenceMarker>,
+  isVisible: (id: string) => boolean,
+) {
+  for (const [id, marker] of markers) marker.element.hidden = !isVisible(id);
+}
+
+function setSelectedMarker(
+  markers: Map<string, EvidenceMarker>,
+  selectedId: string | null,
+) {
+  for (const [id, marker] of markers) {
+    marker.element.classList.toggle("selected", id === selectedId);
+  }
+}
+
+function removeMarkers(markers: Map<string, EvidenceMarker>) {
+  for (const marker of markers.values()) marker.marker.remove();
+  markers.clear();
+}
+
+function mapProperties(feature: ScreeningFeatureCollection["features"][number]) {
+  const { governorates, region_groups: regionGroups, ...properties } = feature.properties;
+  return {
+    ...properties,
+    governorates_label: governorates.join(", "),
+    region_groups_label: regionGroups.join(", "),
+  };
+}
+
+function toGridCollection(data: ScreeningFeatureCollection) {
+  return {
+    type: "FeatureCollection" as const,
+    features: data.features.map((feature) => ({
+      ...feature,
+      properties: mapProperties(feature),
+    })),
+  };
+}
+
 function toPointCollection(data: ScreeningFeatureCollection) {
   return {
     type: "FeatureCollection" as const,
@@ -61,7 +107,7 @@ function toPointCollection(data: ScreeningFeatureCollection) {
         type: "Point" as const,
         coordinates: screeningPolygonCenter(feature),
       },
-      properties: feature.properties,
+      properties: mapProperties(feature),
     })),
   };
 }
@@ -96,15 +142,15 @@ function appendText(container: HTMLElement, tag: "span" | "strong" | "p", value:
 function screeningPopup(properties: Record<string, unknown>) {
   const container = document.createElement("div");
   container.className = "map-popup production-popup";
-  const regionGroups = Array.isArray(properties.region_groups)
-    ? properties.region_groups.join(", ")
-    : String(properties.region_groups ?? "Lebanon");
+  const regionGroups = String(
+    properties.region_groups_label ?? properties.region_groups ?? "Lebanon",
+  );
   appendText(container, "span", `${String(properties.evidence_status).toUpperCase()} · AI SCREENING CELL`);
   appendText(container, "strong", regionGroups);
   appendText(
     container,
     "p",
-    `${properties.candidate_count} candidate${Number(properties.candidate_count) === 1 ? "" : "s"} · ${Number(properties.corroborated_candidate_count)} corroborated · ${Math.round(Number(properties.candidate_footprint_area_m2)).toLocaleString()} m² footprint`,
+    `${properties.candidate_count} candidate${Number(properties.candidate_count) === 1 ? "" : "s"} · ${Number(properties.corroborated_candidate_count)} corroborated · ${Math.round(Number(properties.candidate_footprint_area_m2)).toLocaleString("en-GB")} m² footprint`,
   );
   return container;
 }
@@ -117,7 +163,7 @@ function benchmarkPopup(properties: Record<string, unknown>) {
   appendText(
     container,
     "p",
-    `${Number(properties.capacity_mwp).toLocaleString(undefined, { maximumFractionDigits: 2 })} MWp · ${properties.share_percent}% of national estimate. Regional context, not mapped sites.`,
+    `${Number(properties.capacity_mwp).toLocaleString("en-GB", { maximumFractionDigits: 2 })} MWp · ${properties.share_percent}% of national estimate. Regional context, not mapped sites.`,
   );
   return container;
 }
@@ -152,16 +198,21 @@ export default function ObservatoryMap({
 }: ObservatoryMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const screeningMarkersRef = useRef<Map<string, EvidenceMarker>>(new Map());
+  const benchmarkMarkersRef = useRef<Map<string, EvidenceMarker>>(new Map());
   const onSelectRef = useRef(onSelect);
   const previousSelectionRef = useRef<MapSelection | null>(selected);
   const points = useMemo(() => toPointCollection(data), [data]);
+  const grid = useMemo(() => toGridCollection(data), [data]);
   const benchmarkPoints = useMemo(
     () => toBenchmarkCollection(benchmarkRegions),
     [benchmarkRegions],
   );
   const initialDataRef = useRef(data);
+  const initialGridRef = useRef(grid);
   const initialPointsRef = useRef(points);
   const initialBenchmarkPointsRef = useRef(benchmarkPoints);
+  const initialBenchmarkRegionsRef = useRef(benchmarkRegions);
   const initialViewRef = useRef(view);
 
   useEffect(() => {
@@ -170,6 +221,9 @@ export default function ObservatoryMap({
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+
+    const screeningMarkers = screeningMarkersRef.current;
+    const benchmarkMarkers = benchmarkMarkersRef.current;
 
     const tileUrl =
       process.env.NEXT_PUBLIC_MAP_TILE_URL ??
@@ -214,7 +268,83 @@ export default function ObservatoryMap({
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
 
     map.on("load", () => {
-      map.addSource("screening-grid", { type: "geojson", data: initialDataRef.current });
+      for (const feature of initialDataRef.current.features) {
+        const button = document.createElement("button");
+        const count = feature.properties.candidate_count;
+        const corroborated = feature.properties.evidence_status === "corroborated";
+        button.type = "button";
+        button.className = `map-evidence-marker map-evidence-marker-screening${corroborated ? " corroborated" : ""}`;
+        button.classList.toggle(
+          "selected",
+          previousSelectionRef.current?.kind === "screening" &&
+            previousSelectionRef.current.id === feature.id,
+        );
+        button.setAttribute(
+          "aria-label",
+          `${count} AI-screened solar candidate${count === 1 ? "" : "s"} in ${feature.properties.region_groups.join(", ")}`,
+        );
+        const value = document.createElement("strong");
+        value.textContent = String(count);
+        const label = document.createElement("span");
+        label.textContent = corroborated ? "AI + OSM" : "AI";
+        button.append(value, label);
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          onSelectRef.current({ kind: "screening", id: feature.id });
+          new maplibregl.Popup({ offset: 24, closeButton: false })
+            .setLngLat(screeningPolygonCenter(feature))
+            .setDOMContent(screeningPopup(mapProperties(feature)))
+            .addTo(map);
+        });
+        const marker = new maplibregl.Marker({ element: button, anchor: "center" })
+          .setLngLat(screeningPolygonCenter(feature))
+          .addTo(map);
+        screeningMarkers.set(feature.id, { element: button, marker });
+      }
+
+      for (const region of initialBenchmarkRegionsRef.current) {
+        const coordinate = benchmarkCoordinates[region.region];
+        if (!coordinate) continue;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "map-evidence-marker map-evidence-marker-benchmark";
+        button.classList.toggle(
+          "selected",
+          previousSelectionRef.current?.kind === "benchmark" &&
+            previousSelectionRef.current.id === region.region,
+        );
+        button.setAttribute(
+          "aria-label",
+          `${region.region}: ${region.capacityMwp.toLocaleString("en-GB", { maximumFractionDigits: 2 })} MWp regional research estimate`,
+        );
+        const value = document.createElement("strong");
+        value.textContent = `${Math.round(region.capacityMwp)}`;
+        const label = document.createElement("span");
+        label.textContent = "MWp";
+        button.append(value, label);
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          onSelectRef.current({ kind: "benchmark", id: region.region });
+          new maplibregl.Popup({ offset: 30, closeButton: false })
+            .setLngLat(coordinate)
+            .setDOMContent(benchmarkPopup({
+              id: region.region,
+              region: region.region,
+              capacity_mwp: region.capacityMwp,
+              share_percent: region.sharePercent,
+            }))
+            .addTo(map);
+        });
+        const marker = new maplibregl.Marker({ element: button, anchor: "center" })
+          .setLngLat(coordinate)
+          .addTo(map);
+        benchmarkMarkers.set(region.region, { element: button, marker });
+      }
+
+      setMarkerVisibility(screeningMarkers, () => initialViewRef.current !== "research");
+      setMarkerVisibility(benchmarkMarkers, () => initialViewRef.current !== "ai");
+
+      map.addSource("screening-grid", { type: "geojson", data: initialGridRef.current });
       map.addSource("screening-points", { type: "geojson", data: initialPointsRef.current });
       map.addSource("benchmark-points", {
         type: "geojson",
@@ -405,12 +535,16 @@ export default function ObservatoryMap({
     });
 
     return () => {
+      removeMarkers(screeningMarkers);
+      removeMarkers(benchmarkMarkers);
       map.remove();
       mapRef.current = null;
     };
   }, []);
 
   useEffect(() => {
+    setMarkerVisibility(screeningMarkersRef.current, () => view !== "research");
+    setMarkerVisibility(benchmarkMarkersRef.current, () => view !== "ai");
     const map = mapRef.current;
     if (!map?.isStyleLoaded()) return;
     setLayerGroupVisibility(map, screeningLayerIds, view !== "research");
@@ -418,13 +552,18 @@ export default function ObservatoryMap({
   }, [view]);
 
   useEffect(() => {
+    const visibleIds = new Set(data.features.map((feature) => feature.id));
+    setMarkerVisibility(
+      screeningMarkersRef.current,
+      (id) => view !== "research" && visibleIds.has(id),
+    );
     const map = mapRef.current;
     if (!map?.isStyleLoaded()) return;
     const source = map.getSource("screening-grid") as GeoJSONSource | undefined;
     const pointSource = map.getSource("screening-points") as GeoJSONSource | undefined;
-    source?.setData(data);
+    source?.setData(grid);
     pointSource?.setData(points);
-  }, [data, points]);
+  }, [data, grid, points, view]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -455,6 +594,14 @@ export default function ObservatoryMap({
   }, [theme]);
 
   useEffect(() => {
+    setSelectedMarker(
+      screeningMarkersRef.current,
+      selected?.kind === "screening" ? selected.id : null,
+    );
+    setSelectedMarker(
+      benchmarkMarkersRef.current,
+      selected?.kind === "benchmark" ? selected.id : null,
+    );
     const map = mapRef.current;
     if (!map?.isStyleLoaded()) return;
     const previous = previousSelectionRef.current;
@@ -490,6 +637,7 @@ export default function ObservatoryMap({
       }
     }
     previousSelectionRef.current = selected;
+
   }, [data.features, selected]);
 
   useEffect(() => {

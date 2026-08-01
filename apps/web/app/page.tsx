@@ -47,7 +47,7 @@ export default async function Home() {
               <Link className="button button-ghost" href="/methodology">How the evidence works</Link>
             </div>
             <div className="hero-proof production-proof">
-              <span><b>{nationalCapacityBenchmark.totalCapacityMwp.toLocaleString(undefined, { maximumFractionDigits: 2 })}</b> MWp research context</span>
+              <span><b>{nationalCapacityBenchmark.totalCapacityMwp.toLocaleString("en-GB", { maximumFractionDigits: 2 })}</b> MWp research context</span>
               <span><b>{release.metadata.candidate_count}</b> AI-screened candidates</span>
               <span><b>{release.features.length}</b> public evidence cells</span>
             </div>
@@ -60,7 +60,7 @@ export default async function Home() {
         <div className="shell release-ribbon-inner">
           <div><span className="live-pulse" /><strong>Latest release</strong><p>Nationwide large-solar AI screening · January 2024 source snapshot</p></div>
           <div><span>Result</span><strong>{release.metadata.candidate_count} candidates · {release.metadata.corroborated_candidate_count} corroborated</strong></div>
-          <Link href="/experiments/satlas-lebanon-2024">View experiment record <span>→</span></Link>
+          <Link href="/data">View release record <span>→</span></Link>
         </div>
       </section>
 

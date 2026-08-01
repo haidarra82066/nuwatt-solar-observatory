@@ -47,7 +47,7 @@ function statusLabel(status: ScreeningEvidenceStatus) {
 }
 
 function footprint(value: number) {
-  return `${Math.round(value).toLocaleString()} m²`;
+  return `${Math.round(value).toLocaleString("en-GB")} m²`;
 }
 
 export function ObservatoryClient({
@@ -371,7 +371,7 @@ export function ObservatoryClient({
         <div className="observatory-download-row">
           <div><span>Open release</span><strong>Inspect, download, and reproduce the public evidence.</strong></div>
           <div className="button-row">
-            <a className="button button-primary" href="/data/experiments/lbn-satlas-screening-2024-01-v1.geojson" download>Download GeoJSON ↓</a>
+            <a className="button button-primary" href="/api/v1/screening">Open GeoJSON ↓</a>
             <Link className="button button-secondary" href="/methodology">Read methodology</Link>
             <Link className="button button-secondary" href="/data">Data & API</Link>
           </div>

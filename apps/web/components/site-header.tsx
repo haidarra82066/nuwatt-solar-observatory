@@ -5,7 +5,6 @@ import { BrandMark } from "@/components/brand-mark";
 const navigation = [
   { href: "/observatory", label: "Map" },
   { href: "/observatory#insights", label: "Insights" },
-  { href: "/experiments", label: "Experiments" },
   { href: "/methodology", label: "Methodology" },
   { href: "/data", label: "Open data" },
 ];
