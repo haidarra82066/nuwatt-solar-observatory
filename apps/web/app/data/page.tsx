@@ -37,8 +37,18 @@ export default function DataPage() {
       <div className="shell notice-wrap"><DemoNotice /></div>
 
       <section className="section shell release-grid">
+        <article className="release-card experiment-release screening-release">
+          <div><span className="status-badge screening-share">Actual AI screening · caveated</span><code>lbn-satlas-screening-2024-01-v1</code></div>
+          <h2>Lebanon large-installation screening</h2>
+          <p>Twenty-one AI-screened solar-farm candidates aggregated into 18 privacy-safe 5 km cells. Two candidates overlap independently mapped photovoltaic generators. This is not a rooftop or capacity inventory.</p>
+          <dl><div><dt>Candidates</dt><dd>21 screened</dd></div><div><dt>Corroborated</dt><dd>2 candidates</dd></div><div><dt>Sensor</dt><dd>Sentinel-2 · 10 m</dd></div></dl>
+          <div className="button-row">
+            <a className="button button-primary" href="/experiments/satlas-lebanon-2024">Open heatmap</a>
+            <a className="button button-secondary" href="/data/experiments/lbn-satlas-screening-2024-01-v1.geojson" download>Download screening GeoJSON <span>↓</span></a>
+          </div>
+        </article>
         <article className="release-card experiment-release">
-          <div><span className="status-badge experiment-failed">Actual AI run · no release</span><code>beirut-port-oam-2020-v1</code></div>
+          <div><span className="status-badge experiment-failed">Actual AI run · no detection release</span><code>beirut-port-oam-2020-v1</code></div>
           <h2>First free open-imagery experiment</h2>
           <p>Actual tiled inference over 0.383 km² of CC BY 4.0 Beirut imagery. Human review rejected all 39 unique proposals, so zero detections—and no misleading heatmap—were published.</p>
           <dl><div><dt>Result</dt><dd>0 accepted</dd></div><div><dt>Validation</dt><dd>Needs revision</dd></div><div><dt>Imagery</dt><dd>12.1 cm · 2020</dd></div></dl>
