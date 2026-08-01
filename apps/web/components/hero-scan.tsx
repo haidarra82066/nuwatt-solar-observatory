@@ -1,22 +1,24 @@
 import Image from "next/image";
 
 const signals = [
-  { x: 52, y: 17, value: "0.82" },
-  { x: 39, y: 35, value: "0.91" },
-  { x: 64, y: 48, value: "0.68" },
-  { x: 34, y: 66, value: "0.84" },
-  { x: 57, y: 79, value: "0.77" },
+  { x: 52, y: 18, value: "3", label: "North" },
+  { x: 63, y: 48, value: "9", label: "Beqaa" },
+  { x: 40, y: 33, value: "1", label: "Beirut + ML" },
+  { x: 38, y: 74, value: "8", label: "South" },
 ];
 
 export function HeroScan() {
   return (
-    <div className="hero-scan" aria-label="Conceptual visualization of solar observations across Lebanon">
+    <div
+      className="hero-scan live-hero-scan"
+      aria-label="Overview of the real January 2024 AI screening result by Lebanon region"
+    >
       <div className="scan-topline">
         <span className="scan-brand">
           <Image src="/brand/nuwatt-symbol.webp" alt="" width={28} height={28} />
-          <span><i /> Live evidence layer</span>
+          <span><i /> Public evidence release</span>
         </span>
-        <code>33.8547° N · 35.8623° E</code>
+        <code>SATLAS · 2024-01 · V1</code>
       </div>
       <div className="scan-canvas">
         <div className="map-grid" aria-hidden="true" />
@@ -39,23 +41,24 @@ export function HeroScan() {
           <span
             className={`signal signal-${index + 1}`}
             style={{ left: `${signal.x}%`, top: `${signal.y}%` }}
-            key={`${signal.x}-${signal.y}`}
+            key={signal.label}
           >
             <i />
             <b>{signal.value}</b>
+            <small>{signal.label}</small>
           </span>
         ))}
         <div className="scan-beam" aria-hidden="true" />
         <div className="map-readout">
-          <span>Model confidence</span>
-          <strong>79%</strong>
-          <small>Synthetic pilot mean</small>
+          <span>AI-screened candidates</span>
+          <strong>21</strong>
+          <small>Large installations · 18 public cells</small>
         </div>
       </div>
       <div className="scan-legend">
-        <span><i className="dot verified" /> Verified</span>
-        <span><i className="dot detected" /> Detected</span>
-        <span><i className="dot estimated" /> AI-estimated</span>
+        <span><i className="dot detected" /> AI screened</span>
+        <span><i className="dot verified" /> 2 corroborated</span>
+        <span><i className="dot estimated" /> 10 m imagery</span>
       </div>
     </div>
   );

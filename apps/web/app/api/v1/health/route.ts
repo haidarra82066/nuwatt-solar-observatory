@@ -1,12 +1,19 @@
 import { getObservationRelease } from "@/lib/release";
+import { getScreeningRelease } from "@/lib/screening-server";
 
 export async function GET() {
-  const release = await getObservationRelease();
+  const [legacyRelease, screeningRelease] = await Promise.all([
+    getObservationRelease(),
+    getScreeningRelease(),
+  ]);
   return Response.json({
     status: "ok",
     service: "nuwatt-observatory-api",
-    release: release.id,
-    dataMode: release.dataMode,
+    publicRelease: screeningRelease.metadata.release,
+    publicDataMode: screeningRelease.metadata.data_mode,
+    publicCandidateCount: screeningRelease.metadata.candidate_count,
+    legacyContractRelease: legacyRelease.id,
+    legacyContractDataMode: legacyRelease.dataMode,
     timestamp: new Date().toISOString(),
   });
 }

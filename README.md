@@ -3,18 +3,18 @@
 An open, versioned, and uncertainty-aware geospatial platform for understanding
 Lebanon's distributed photovoltaic fleet.
 
-> **Current status: foundation release with two open-data experiments.** The
-> default observatory layer remains synthetic demonstration data and does not
-> claim national rooftop-PV coverage. A separate, clearly labelled experiment
-> now publishes a privacy-safe heatmap of 21 historical large-solar candidates
-> screened by the Satlas AI system; two have independent OpenStreetMap
-> corroboration. No imagery-derived capacity is claimed.
+> **Current status: public beta with a real AI screening layer.** The primary
+> observatory publishes a privacy-safe heatmap of 21 historical large-solar
+> candidates screened by the Satlas AI system; two have independent
+> OpenStreetMap corroboration. It also presents the 1,081.27 MWp LCEC market
+> benchmark as a separate research layer. No imagery-derived capacity is
+> claimed for the AI candidates, and the release is not a rooftop inventory.
 
 ## What is included
 
 - A responsive Next.js observatory with an interactive Lebanon map
-- Explicit `Detected`, `AI-estimated`, and `Verified` evidence states
-- P10/P50/P90 capacity and technical-generation estimates
+- Distinct `screened`, `corroborated`, and regional `research benchmark` layers
+- A combined interactive map with region, evidence, metric, and appearance controls
 - Public JSON and GeoJSON API routes
 - A versioned sample data release and downloadable OpenAPI definition
 - A Python capacity-estimation pipeline and privacy-safe AI-detection publisher
@@ -76,10 +76,10 @@ python -m services.pipeline.src.nuwatt_pipeline.publish \
   --release lbn-ai-2027-01 --grid-size-m 250 --min-cell-count 3
 ```
 
-Set `NUWATT_RELEASE_GEOJSON_URL` to the immutable public GeoJSON URL to replace
-the synthetic layer. The web app rejects files that lack approved imagery
-licensing, model/source lineage, sufficient image resolution, or privacy-safe
-aggregation.
+The real screening release is the default public observatory layer and is also
+available through `GET /api/v1/screening`. The older P10/P50/P90 observation
+contract remains a separate synthetic API sample until a validated panel-level
+detection release passes imagery, licensing, lineage, and privacy gates.
 
 ## Repository map
 
@@ -111,6 +111,7 @@ The foundation API is available under `/api/v1`:
 
 - `GET /api/v1/health`
 - `GET /api/v1/benchmark`
+- `GET /api/v1/screening`
 - `GET /api/v1/summary`
 - `GET /api/v1/cells?status=detected&governorate=Beirut`
 - `GET /api/v1/municipalities`

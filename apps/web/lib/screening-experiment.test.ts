@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
+import { summarizeScreeningRegions } from "@/lib/screening";
+import type { ScreeningFeatureCollection } from "@/lib/screening";
+
 type ScreeningProperties = {
   id: string;
   evidence_status: "screened" | "corroborated";
@@ -80,5 +83,20 @@ describe("Satlas Lebanon screening release", () => {
       release.metadata.candidate_footprint_area_m2,
       3,
     );
+  });
+
+  it("produces the regional comparison used by the public observatory", () => {
+    const regions = summarizeScreeningRegions(
+      release as unknown as ScreeningFeatureCollection,
+    );
+
+    expect(regions.map(({ region, candidateCount }) => [region, candidateCount])).toEqual([
+      ["Beqaa", 9],
+      ["South", 8],
+      ["North", 3],
+      ["Beirut & Mount Lebanon", 1],
+    ]);
+    expect(regions.reduce((sum, item) => sum + item.candidateCount, 0)).toBe(21);
+    expect(regions.reduce((sum, item) => sum + item.corroboratedCount, 0)).toBe(2);
   });
 });
