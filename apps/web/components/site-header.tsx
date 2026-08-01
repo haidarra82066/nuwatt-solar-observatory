@@ -4,6 +4,7 @@ import { BrandMark } from "@/components/brand-mark";
 
 const navigation = [
   { href: "/observatory", label: "Observatory" },
+  { href: "/experiments/beirut-port-2020", label: "Experiment 01" },
   { href: "/methodology", label: "Methodology" },
   { href: "/data", label: "Data & API" },
   { href: "/roadmap", label: "Roadmap" },

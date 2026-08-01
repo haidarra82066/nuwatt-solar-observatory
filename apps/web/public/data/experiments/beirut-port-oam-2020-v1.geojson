@@ -1,0 +1,51 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "experiment": "beirut-port-oam-2020-v1",
+    "data_mode": "model-experiment",
+    "release_status": "failed-validation",
+    "validation_disposition": "needs-revision",
+    "accepted_detections": 0,
+    "raw_model_proposals": 64,
+    "deduplicated_review_candidates": 39,
+    "imagery_source": "OpenAerialMap",
+    "source_asset_id": "5f2bd318b0052e00067dbaef",
+    "source_license_decision": "approved-for-historical-micro-pilot",
+    "imagery_license": "CC BY 4.0",
+    "imagery_date": "2020-08-04",
+    "imagery_resolution_m": 0.12124,
+    "valid_imagery_area_km2": 0.382629,
+    "model_source": "https://huggingface.co/agademer/yolo-remote-sensing-photovoltaic",
+    "model_license": "CC BY 4.0",
+    "confidence_threshold": 0.03,
+    "manual_review": "All 39 unique proposals rejected as debris, containers, vehicles, or other hard negatives.",
+    "publication_decision": "No detection heatmap, capacity estimate, or technical-yield estimate was emitted."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "beirut-port-oam-2020-coverage",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [35.51574783866193, 33.89737827070466],
+            [35.52405919337954, 33.89737827070466],
+            [35.52405919337954, 33.90418515362868],
+            [35.51574783866193, 33.90418515362868],
+            [35.51574783866193, 33.89737827070466]
+          ]
+        ]
+      },
+      "properties": {
+        "kind": "imagery-coverage",
+        "name": "Beirut Port historical feasibility footprint",
+        "valid_imagery_area_km2": 0.382629,
+        "accepted_detections": 0,
+        "imagery_date": "2020-08-04",
+        "imagery_resolution_m": 0.12124,
+        "review_outcome": "failed-validation"
+      }
+    }
+  ]
+}

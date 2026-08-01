@@ -6,6 +6,8 @@ Lebanon's distributed photovoltaic fleet.
 > **Current status: foundation release.** The application is fully runnable,
 > but its bundled observations are synthetic demonstration data. It does not yet
 > claim national rooftop-PV coverage or publish measured Lebanese installations.
+> The first licensed open-imagery micro-pilot is complete: 39 model proposals
+> were reviewed and zero were accepted, so no false detection heatmap was released.
 
 ## What is included
 
@@ -18,6 +20,7 @@ Lebanon's distributed photovoltaic fleet.
 - A PostGIS-ready production schema
 - Docker, continuous integration, tests, governance, privacy, and imagery-policy documentation
 - A phase-gated plan from foundation to a validated public MVP
+- A reproducible result record for the first free Beirut open-imagery experiment
 
 ## Product boundary
 
@@ -92,6 +95,11 @@ The executable roadmap is in [docs/ROADMAP.md](docs/ROADMAP.md). The shortest
 credible path is a 20-50 km², four-environment pilot followed by a public beta.
 The decisive experiment is whether free lower-resolution imagery can rank PV
 candidates materially better than a simple contextual baseline.
+
+The first high-resolution source check is documented in
+[docs/experiments/BEIRUT_PORT_OAM_2020_V1.md](docs/experiments/BEIRUT_PORT_OAM_2020_V1.md).
+It validated the pipeline but rejected every proposal, because the legally open
+scene is a small post-explosion port orthomosaic rather than intact rooftop stock.
 
 ## API
 

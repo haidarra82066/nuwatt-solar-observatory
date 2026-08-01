@@ -1,5 +1,18 @@
 # Model evaluation plan
 
+## Experiment log
+
+The first free-data micro-pilot, `beirut-port-oam-2020-v1`, completed on
+1 August 2026. An open photovoltaic segmentation model generated 39 unique
+review candidates from 0.383 km2 of CC BY 4.0 post-explosion Beirut Port
+orthomosaic. Manual review accepted zero candidates. The source and model
+combination therefore failed the transfer and fit-for-purpose gate; no heatmap,
+capacity estimate, or public detection release was emitted. This negative result
+does not measure recall because the scene has no established positive reference
+labels.
+
+Full record: [`experiments/BEIRUT_PORT_OAM_2020_V1.md`](experiments/BEIRUT_PORT_OAM_2020_V1.md).
+
 ## Decisive MVP experiment
 
 Can a low-resolution, building-level model identify likely PV installations

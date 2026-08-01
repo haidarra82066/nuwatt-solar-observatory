@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_id": "beirut-port-oam-2020-v1",
+  "started_at": "2026-08-01",
+  "status": "complete",
+  "validation_disposition": "needs-revision",
+  "scope": {
+    "purpose": "Free immediate feasibility test of an open PV segmentation model on legally reusable Lebanon imagery.",
+    "geography": "Beirut Port, Lebanon",
+    "bbox_wgs84": [35.51574783866193, 33.89737827070466, 35.52405919337954, 33.90418515362868],
+    "valid_imagery_area_km2": 0.382629,
+    "representative_of_lebanon": false,
+    "current_inventory_evidence": false
+  },
+  "imagery": {
+    "provider": "OpenAerialMap",
+    "asset_id": "5f2bd318b0052e00067dbaef",
+    "title": "Beirut Port Explosion. 4-8-2020",
+    "acquisition_date": "2020-08-04",
+    "ground_sample_distance_m": 0.12124,
+    "crs": "EPSG:32636",
+    "width_pixels": 6195,
+    "height_pixels": 6079,
+    "sha256": "b5d285a98ee97153e99b9e7b0be8784c5f68442bdfb6f14b926af4bdd24c73c9",
+    "license": "CC BY 4.0",
+    "license_decision": "approved-for-historical-micro-pilot",
+    "attribution": "UAV imagery: Rabih El Zein (@rabzthecopter); orthoimage: @GeoConor; distributed via OpenAerialMap",
+    "asset_url": "https://oin-hotosm-temp.s3.amazonaws.com/5f2bd274b0052e00067dbaed/0/5f2bd274b0052e00067dbaee.tif"
+  },
+  "model": {
+    "repository": "https://huggingface.co/agademer/yolo-remote-sensing-photovoltaic",
+    "weights": "yolo-remote-sensing-photovoltaic-v26l-solar-farms-and-cities-v20260403-segment-300_epochs.pt",
+    "sha256": "f8dd5e0526a82fbc95608f76d314f920893d285e802335554e2005ab00e2348c",
+    "license": "CC BY 4.0",
+    "runtime": "Ultralytics 8.4.115",
+    "runtime_license": "AGPL-3.0",
+    "runtime_boundary": "Isolated local batch research run; runtime and weights are not committed or deployed with the public application."
+  },
+  "inference": {
+    "target_resolution_m": 0.2,
+    "tile_size_pixels": 960,
+    "tile_overlap": 0.2,
+    "tile_count": 25,
+    "confidence_threshold": 0.03,
+    "iou_threshold": 0.5,
+    "duration_seconds": 47.276,
+    "device": "CPU"
+  },
+  "results": {
+    "raw_model_proposals": 64,
+    "deduplicated_review_candidates": 39,
+    "maximum_candidate_confidence": 0.253984,
+    "accepted_detections": 0,
+    "verified_detections": 0,
+    "public_aggregate_cells": 0,
+    "capacity_estimate_emitted": false,
+    "technical_yield_estimate_emitted": false
+  },
+  "validation": {
+    "method": "Human visual review of every deduplicated candidate against the source orthomosaic.",
+    "decision": "All candidates rejected.",
+    "observed_hard_negatives": ["blast debris", "shipping containers", "vehicles", "damaged industrial structures", "orthomosaic edge artifacts"],
+    "blockers": [
+      "The acquisition is a post-explosion industrial disaster scene with almost no intact rooftop stock.",
+      "The model was trained on French orthophotos and did not transfer safely to this Beirut scene.",
+      "The single 0.383 km2 footprint cannot support a Lebanon-wide performance or prevalence claim."
+    ]
+  },
+  "publication": {
+    "candidate_geometries_public": false,
+    "summary_geojson": "/data/experiments/beirut-port-oam-2020-v1.geojson",
+    "observation_release_created": false,
+    "reason": "No candidate passed human validation, so publishing a detection or heat layer would be misleading."
+  }
+}

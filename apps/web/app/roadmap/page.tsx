@@ -14,7 +14,7 @@ const phases = [
     gate: "Repository builds cleanly and every demo value is visibly non-production.",
   },
   {
-    number: "01", duration: "2-3 weeks", title: "Free-data feasibility", status: "Next",
+    number: "01", duration: "2-3 weeks", title: "Free-data feasibility", status: "In progress · first micro-pilot complete",
     goal: "Test free nationwide inputs and identify legal high-resolution pilot sources.",
     deliverables: ["Lebanon AOI and building inventory", "Sentinel-2 time-series pipeline", "Imagery licence registry", "Candidate baseline", "Pilot-area scorecard"],
     gate: "Four representative 5-12 km² areas have legal imagery and sufficient ground truth.",

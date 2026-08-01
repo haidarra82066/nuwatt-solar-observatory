@@ -37,6 +37,16 @@ export default function DataPage() {
       <div className="shell notice-wrap"><DemoNotice /></div>
 
       <section className="section shell release-grid">
+        <article className="release-card experiment-release">
+          <div><span className="status-badge experiment-failed">Actual AI run · no release</span><code>beirut-port-oam-2020-v1</code></div>
+          <h2>First free open-imagery experiment</h2>
+          <p>Actual tiled inference over 0.383 km² of CC BY 4.0 Beirut imagery. Human review rejected all 39 unique proposals, so zero detections—and no misleading heatmap—were published.</p>
+          <dl><div><dt>Result</dt><dd>0 accepted</dd></div><div><dt>Validation</dt><dd>Needs revision</dd></div><div><dt>Imagery</dt><dd>12.1 cm · 2020</dd></div></dl>
+          <div className="button-row">
+            <a className="button button-primary" href="/experiments/beirut-port-2020">Inspect experiment</a>
+            <a className="button button-secondary" href="/data/experiments/beirut-port-oam-2020-v1.geojson" download>Download result GeoJSON <span>↓</span></a>
+          </div>
+        </article>
         <article className="release-card primary-release">
           <div><span className="status-badge detected">Current</span><code>demo-2026-01</code></div>
           <h2>Synthetic foundation release</h2>
